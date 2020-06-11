@@ -41,22 +41,29 @@ echo "<p>Частное от деления $a на $b равно " . (div($a, $
 
 <?php
 
+// function mathOperation($arg1, $arg2, $operation) {
+//     switch ($operation) {
+//         case 'sum':
+//             return sum($arg1, $arg2);
+//             break;
+//         case 'sub':
+//             return sub($arg1, $arg2);
+//             break;
+//         case 'mult':
+//             return mult($arg1, $arg2);
+//             break;
+//         case 'div':
+//             return div($arg1, $arg2);
+//             break;
+//     }
+// }
+
 function mathOperation($arg1, $arg2, $operation) {
-    switch ($operation) {
-        case 'sum':
-            return sum($arg1, $arg2);
-            break;
-        case 'sub':
-            return sub($arg1, $arg2);
-            break;
-        case 'mult':
-            return mult($arg1, $arg2);
-            break;
-        case 'div':
-            return div($arg1, $arg2);
-            break;
-    }
+  if (!function_exists($operation)) return false;
+  return $operation($arg1, $arg2);
 }
+
+
 
 echo "Сложение: " . mathOperation($a, $b, 'sum') . "<br>";
 echo "Вычитание: " . mathOperation($a, $b, 'sub') . "<br>";
