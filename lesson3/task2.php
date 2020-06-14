@@ -22,4 +22,13 @@ function printOddEven($max) {
 };
 printOddEven(10);
 
+
+// Вариант 2: за один проход цикла выводим сразу 2 числа
+$num = 0;
+echo $num++ . " - Ноль. <br>";
+do {
+  echo $num++ . " - Нечетное число. <br>";
+  echo $num++ . " - Четное число. <br>";
+} while ($num <= 10);
+
 ?>

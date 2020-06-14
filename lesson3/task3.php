@@ -39,4 +39,11 @@ foreach ($cities as $key => $value) {
   }
 }
 
+// Вариант 2
+foreach ($cities as $key => $value) {
+  echo "$key:<br>";
+  echo implode(', ', $value) . '<br>';
+}
+
+
 ?>
