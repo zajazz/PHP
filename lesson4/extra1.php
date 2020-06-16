@@ -23,7 +23,7 @@ function makeLog() {
 
   if (count($fc) >= 10) {
     // создаём новый файл
-    $archive = fopen('log_' . date("Ymd_Hi") . '.txt', 'w');
+    $archive = fopen('log_' . date("Ymd_His") . '.txt', 'w');
     fwrite($archive, implode(PHP_EOL, $fc));
     $fc = [];
     fclose($archive);
@@ -37,5 +37,17 @@ function makeLog() {
 
 var_dump(explode(PHP_EOL, file_get_contents('log.txt')));
 makeLog();
+
+?>
+
+<?php
+
+// function getArchvieFileNumber() {
+//   $fileArr = array_slice(scandir(__DIR__), 2);
+//   $fileArr = array_filter($fileArr, function ($val) {
+//     return strpos($val, 'log') === 0;
+//   });
+//   return $fileArr;
+// }
 
 ?>
