@@ -31,6 +31,6 @@ if ($_POST)
   }
 }
 
-$formInfo = "<p $style>$message</p>";
+$uploadInfo = "<p $style>$message</p>";
 
 ?>

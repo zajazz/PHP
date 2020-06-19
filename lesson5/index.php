@@ -12,7 +12,7 @@ $db = db();
 
 /**
 * Загружает изображение на сервер и в БД,
-* формирует ответ в $formInfo
+* формирует ответ в $uploadInfo
 */
 @include 'upload.php';
 
@@ -35,7 +35,7 @@ function createGallery() {
 
 
 $html = file_get_contents('templates/gallery.html');
-$html = str_replace(['{{FORM_INFO}}', '{{GALLERY}}'], [$formInfo, createGallery()], $html);
+$html = str_replace(['{{FORM_INFO}}', '{{GALLERY}}'], [$uploadInfo, createGallery()], $html);
 
 
 echo $html;
