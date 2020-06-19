@@ -1,0 +1,91 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+  <title>Photo gallery</title>
+  <style>
+    .bb {
+      border: 1px solid red;
+    }
+    .label-w {
+      min-width: 5em;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="row justify-content-center">
+
+    <h1 class="mt-4">Photo gallery</h1>
+    <div class="w-100 m-3"></div>
+
+
+    <!-- ФОРМА ЗАГРУЗКИ -->
+    <form class="form-inline mb-4 d-flex flex-column align-items-end" enctype="multipart/form-data" method="POST">
+      <div class="input-group mb-1 w-100">
+        <div class="input-group-prepend">
+          <span class="input-group-text label-w" id="inputGroupFileAddon01">Title</span>
+        </div>
+        <input name="title" type="text" class="form-control" placeholder="Describe your picture">
+      </div>
+      <div class="input-group mb-1 w-100">
+        <div class="input-group-prepend">
+          <span class="input-group-text label-w" id="inputGroupFileAddon01">Author</span>
+        </div>
+        <input name="author" type="text" class="form-control" placeholder="Author's name for copyright">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text label-w">Image</span>
+        </div>
+        <div class="custom-file">
+          <input name="picture" type="file" class="custom-file-input" id="inputFile">
+          <label class="custom-file-label" for="inputFile">Choose file</label>
+        </div>
+      </div>
+      <div class="align-self-center">{{FORM_INFO}}</div>
+      <button type="submit" class="btn btn-primary mb-2">Загрузить</button>
+    </form>
+    <div class="w-100"></div>
+
+
+    <!-- ГАЛЕРЕЯ -->
+    <div class="row m-3">
+      {{GALLERY}}
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ -->
+  <div class="accordion m-3" id="accordionExample">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h5 class="mb-0">
+          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Задание для фотогалереи
+          </button>
+        </h5>
+      </div>
+
+      <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample" aria-expanded="false">
+        <div class="card-body">
+          <p>1. Создать галерею изображений, состоящую из двух страниц:
+          просмотр всех фотографий (уменьшенных копий);
+          просмотр конкретной фотографии (изображение оригинального размера) по ее ID в базе данных.</p>
+          <p>2. В базе данных создать таблицу, в которой будет храниться информация о картинках (адрес на сервере, размер, имя).</p>
+          <p>3. *На странице просмотра фотографии полного размера под картинкой должно быть указано число ее просмотров.</p>
+          <p>4. *На странице просмотра галереи список фотографий должен быть отсортирован по популярности. Популярность = число кликов по фотографии.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</body>
+</html>
