@@ -11,4 +11,4 @@ while($row = mysqli_fetch_assoc($result)) {
 
 php;
 }
-echo '<h1>ПОльзователи </h1>' . $users;
+echo '<h1>Пользователи </h1>' . $users;

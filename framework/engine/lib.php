@@ -1,11 +1,8 @@
 <?php
-$link = mysqli_connect('localhost', 'root', '','gbphp');
+$link = mysqli_connect('localhost', 'root', 'root','gbphp');
 
 /**
  *
- *
- * @param array $pages
- * @return mixed
  */
 function getPage(array $pages)
 {
