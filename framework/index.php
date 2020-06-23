@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/engine/lib.php';
 
 $pages = include __DIR__ . '/config/pagesConfig.php';
@@ -15,3 +16,5 @@ echo str_replace(
     [$content],
     $html
 );
+
+// var_dump($page);
