@@ -2,7 +2,7 @@
 
 $sql = 'SELECT * FROM products';
 $result = mysqli_query($link, $sql);
-$img = '/framework/img/';
+$img = '/img/';
 
 $products = '<div class="row">';
 while($row = mysqli_fetch_assoc($result)) {

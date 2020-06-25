@@ -2,11 +2,11 @@
 if($_GET['comment']) {
   $sql = "INSERT INTO comments VALUES (NULL, " . getId() . ", '{$_GET['comment']}')";
   mysqli_query($link, $sql);
-  header('Location: /framework/?page=6&id=' . getId());
+  header('Location: /?page=6&id=' . getId());
   exit;
 }
 
-$img = '/framework/img/';
+$img = '/img/';
 $sql = 'SELECT * FROM products WHERE id = ' . getId();
 $result = mysqli_query($link, $sql);
 

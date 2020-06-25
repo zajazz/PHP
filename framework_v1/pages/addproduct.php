@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "INSERT INTO products
               VALUES (NULL, '{$_POST['title']}', '{$_POST['price']}', '{$_POST['info']}', '{$_FILES['picture']['name']}')";
     if (mysqli_query($link, $sql) === TRUE) {
-      header('Location: /framework/?page=7');
+      header('Location: /?page=7');
       exit;
     } else {
       $message = 'Ошибка записи в базу данных' . mysqli_error($link);

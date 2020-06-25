@@ -8,7 +8,7 @@ ob_start();
 include __DIR__ . '/pages/' . $page;
 $content = ob_get_clean();
 
-$html = file_get_contents(__DIR__ . '/tmpl/main.html');
+$html = file_get_contents(__DIR__ . '/templates/main.html');
 
 echo str_replace(
     ['{{CONTENT}}'],

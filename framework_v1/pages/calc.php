@@ -147,7 +147,7 @@ if ($_GET && function_exists($operation)) {
     </div>
   </div>
 
-<script src="/framework/js/script.js"></script>
+<script src="/js/script.js"></script>
 
 
 

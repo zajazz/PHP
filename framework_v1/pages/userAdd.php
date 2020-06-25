@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ('$fio', '$login', '$password', $is_admin)";
     mysqli_query($link, $sql) or die(mysqli_error($link));
 
-    header('Location: /framework/?page=2');
+    header('Location: /?page=2');
     exit;
 }
 ?>
