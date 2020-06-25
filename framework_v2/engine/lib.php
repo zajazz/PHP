@@ -10,6 +10,7 @@ function getLink(): mysqli
 
 function run()
 {
+  session_start();
   $page = 'index';
   if (!empty($_GET['p'])) {
     $page = $_GET['p'];
@@ -42,6 +43,14 @@ function getFileName($file)
   return dirname(__DIR__) . '/pages/' . $file . '.php';
 }
 
+function getId()
+{
+  if (!empty($_GET['id'])) {
+    return (int) $_GET['id'];
+  }
+  return 0;
+}
+
 function render($template, $params = [], $layout = 'main.php')
 {
   $content = renderTemplate($template, $params);
@@ -53,6 +62,7 @@ function render($template, $params = [], $layout = 'main.php')
   return renderTemplate($layout, [
     'content' => $content,
     'title' => $title,
+    'login' => $_SESSION['login'],
     ]);
 }
 
