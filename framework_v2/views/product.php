@@ -1,34 +1,25 @@
 <?php
-/** @var array $row
- *  @var mysqli_result $comments
+/** @var array $product
+ *  @var string $comments
+ *  @var string $img
  */
-var_dump($_SESSION);
 ?>
-<h1><?= $row['title'] ?></h1>
-<div class="col-6 mb-3 ">
-  <img src="<?php echo $img . $row['img']; ?>" alt="<?= $row['title'] ?>" class="img-thumbnail mb-n1">
-</div>
-<p><?= $row['info'] ?></p>
-<h3><?= $row['price'] ?></h3>
-<a href="?p=addtocart&a=one&id=<?= $row['id'] ?>" class="btn btn-primary my-1">В корзину</a>
-<div class="col w-100 mb-5"></div>
-
-<h2>Отзывы</h2>
-<?php while($row = mysqli_fetch_assoc($comments)) :?>
-  <div class="card mb-2">
-    <div class="card-body">
-      <?= $row['text'] ?>
-    </div>
+<h1 class="h1 mt-5 mb-3"><?= $product['title'] ?></h1>
+<div class="row">
+  <div class="col-lg-6 mb-3 ">
+    <img src="<?php echo $img . $product['img']; ?>" alt="<?= $product['title'] ?>" class="img-thumbnail mb-n1">
   </div>
-<?php endwhile;?>
-
-
-
+  <div class="col-lg-6 mb-3 ">
+    <p><?= $product['info'] ?></p>
+    <h3><?= $product['price'] ?></h3>
+    <a href="?p=cart&a=add&id=<?= $product['id'] ?>" class="btn btn-primary my-1">В корзину</a>
+  </div>
+<div class="col w-100 mb-5"></div>
+</div>
+<?php echo $comments ?>
+<div class="col w-100 mb-5"></div>
 <h2> Добавить отзыв </h2>
-<form class="form-inline mb-4 " method="GET">
-  <input type="hidden" name="p" value="product">
-  <input type="hidden" name="a" value="comment">
-  <input type="hidden" name="id" value="<?php echo getId(); ?>">
+<form class="form-inline mb-4 " method="POST" action="?p=product&a=comment&id=<?= getId(); ?>">
   <div class="row">
     <div class="col">
       <div class="input-group mb-1 w-100">

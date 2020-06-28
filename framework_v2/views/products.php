@@ -1,22 +1,25 @@
 <?php
-/** @var mysqli_result $result
+/** @var array $products
+ * @var string $img
  */
-$img = '/img/';
+
 ?>
-<h1>Товары </h1>
+<h1 class="h1 mt-5 mb-3">Товары </h1>
 <div class="row">
-<?php while($row = mysqli_fetch_assoc($result)) :?>
-  <div class="col-6 col-md-4 col-lg-3">
-    <div class="card bg-light" >
-      <img src="<?php echo $img . $row['img']; ?>" class="card-img-top p-1" alt="<?= $row['title'] ?>">
-      <div class="card-body">
-        <h5 class="card-title"><?= $row['title'] ?></h5>
-        <p class="card-text"><?= $row['info'] ?></p>
-        <h3><?= $row['price'] ?> &#8381;</h3>
-        <a href="?p=product&a=one&id=<?= $row['id'] ?>" class="btn btn-primary my-1">Подробно</a>
-        <a href="?p=addtocart&id=<?= $row['id'] ?>" class="btn btn-primary my-1">В корзину</a>
+<?php foreach($products as $product) :?>
+  <div class="col-6 col-md-4 col-lg-3 d-flex align-items-stretch">
+    <div class="card bg-light">
+      <img src="<?php echo $img . $product['img']; ?>" class="card-img-top p-1" alt="<?= $product['title'] ?>">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title"><?= $product['title'] ?></h5>
+        <p class="card-text flex-grow-1"><?= $product['info'] ?></p>
+        <h3><?= $product['price'] ?> &#8381;</h3>
+        <div>
+          <a href="?p=product&a=one&id=<?= $product['id'] ?>" class="btn btn-primary my-1">Подробно</a>
+          <a href="?p=cart&a=add&id=<?= $product['id'] ?>" class="btn btn-primary my-1">В корзину</a>
+        </div>
       </div>
     </div>
   </div>
-<?php endwhile;?>
+<?php endforeach;?>
 </div>

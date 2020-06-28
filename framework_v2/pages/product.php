@@ -6,30 +6,42 @@ function indexAction()
 
 function allAction()
 {
-  echo "Products";
   $sql = 'SELECT * FROM products';
   $result = mysqli_query(getLink(), $sql);
+  $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
   echo render('products.php', [
-    'result' => $result,
+    'products' => $products,
     'title' => 'Products',
+    'img' => getSettings('img_folder'),
   ]);
 }
 
 function oneAction()
 {
-  echo "Product";
-  $img = '/img/';
+  if (!getId()) {
+    redirect('?p=product');
+    return;
+  }
+
   $sql = 'SELECT * FROM products WHERE id = ' . getId();
   $result = mysqli_query(getLink(), $sql);
   $product = mysqli_fetch_assoc($result);
-  // comments
-  $sql = 'SELECT `text` FROM comments WHERE product_id = ' . getId();
-  $comments = mysqli_query(getLink(), $sql);
 
   echo render('product.php', [
-    'row' => $product,
-    'title' => $row['title'],
-    'img' => $img,
+    'product' => $product,
+    'title' => $product['title'],
+    'img' => getSettings('img_folder'),
+    'comments' => getComments(getId()),
+  ]);
+}
+
+function getComments($id) {
+  $sql = "SELECT `text` FROM comments WHERE product_id = $id";
+  $result = mysqli_query(getLink(), $sql);
+  $comments = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+  if (empty($comments)) return 'There are no comments yet. Leave the first one!';
+  return renderTemplate('patterns/comments.php', [
     'comments' => $comments,
   ]);
 }
@@ -39,9 +51,9 @@ function oneAction()
  */
 function commentAction()
 {
-  if($_GET['comment']) {
-    $sql = "INSERT INTO comments VALUES (NULL, " . getId() . ", '{$_GET['comment']}')";
+  if($_POST['comment']) {
+    $sql = "INSERT INTO comments VALUES (NULL, " . getId() . ", '" . clearString($_POST['comment']) . "')";
     mysqli_query(getLink(), $sql);
   }
-  header('location: /?p=product&a=one&id=' . getId());
+  redirect('?p=product&a=one&id=' . getId());
 }

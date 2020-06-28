@@ -4,7 +4,7 @@
  */
 $sum = 0;
 ?>
-<h1>Cart</h1>
+<h1 class="h1 mt-5 mb-3">Cart</h1>
 <div class="card bg-secondary text-white px-2 py-1 my-1">
   <div class="row mb-1">
     <div class="col-4">Product</div>
@@ -16,7 +16,7 @@ $sum = 0;
 </div>
 <?php if (empty($cart)): ?>
 <div class="card bg-light my-2 px-2 py-3" >
-  <span>Your Cart is empty. Let's start <a href="?p=product" >shopping</a>!</span></div>
+  <span>Your cart is empty. Let's start <a href="?p=product" >shopping</a>!</span></div>
 <?php else: ?>
   <?php foreach($cart as $id => $item) :?>
     <div class="card bg-light my-2 px-2 py-1" >

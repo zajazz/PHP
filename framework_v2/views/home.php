@@ -3,6 +3,6 @@
   *  @var string $text
   */
 ?>
-<h1><?= $title ?></h1>
+<h1 class="h1 mt-5 mb-3"><?= $title ?></h1>
 
 <?= $text ?>

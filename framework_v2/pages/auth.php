@@ -1,35 +1,57 @@
 <?php
 function indexAction()
 {
-  echo render('auth.php', [
-    'login' => $_SESSION['login'],
+  if (!empty($_SESSION['login'])) {
+    echo render('account.php', [
+      'user' => $_SESSION['user'],
+      'title' => 'Account',
+    ]);
+    return;
+  }
+  echo render('authform.php', [
     'title' => 'Account',
   ]);
 }
 
 function loginAction()
 {
-  if (empty($_GET['login']) || empty($_GET['passw'])) {
-    indexAction();
-    exit;
+  if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+    redirect('/?p=auth');
+    return;
   }
-  $login = $_GET['login'];
-  $passw = $_GET['passw'];
-  $sql = "SELECT fio, password from users WHERE login = '{$login}'";
+
+  if (empty($_POST['login']) || empty($_POST['password'])) {
+    setMsg('Не все данные переданы');
+    redirect('/?p=auth');
+    return;
+  }
+
+  $login = clearString($_POST['login']);
+  $password = clearString($_POST['password']);
+
+  $sql = "SELECT fio, password, is_admin from users WHERE login = '{$login}'";
   $result = mysqli_query(getLink(), $sql);
   $row = mysqli_fetch_assoc($result);
+  $msg = 'Неверный логин или пароль';
   if (empty($row)) {
-    indexAction();
-    exit;
+    setMsg($msg);
+    redirect('?p=auth');
+    return;
   }
-  if ($passw === $row['password']) {
-    $_SESSION['login'] = $row['fio'];
+
+  if (password_verify($password, $row['password'])) {
+    $_SESSION['login'] = true;
+    unset($row['password']);
+    $_SESSION['user'] = $row;
+    $msg = 'Вы успешно авторизовались';
   }
-  indexAction();
+  setMsg($msg);
+  redirect('?p=auth');
 }
 
 function logoutAction()
 {
   unset($_SESSION['login']);
-  header('location: /');
+  unset($_SESSION['user']);
+  redirect();
 }
