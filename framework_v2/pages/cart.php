@@ -45,6 +45,20 @@ function axiosAddAction() : void
 
   echo json_encode(['success' => true, 'cartCount' => count($_SESSION['cart'])]);
   return;
+}
+
+function jqueryAction() : void
+{
+  header('Content-Type: application/json');
+  $error = addProduct(getIdPost());
+
+  if (!empty($error)) {
+    echo json_encode(['success' => false, 'error' => $error]);
+    return;
+  }
+
+  echo json_encode(['success' => true, 'cartCount' => count($_SESSION['cart'])]);
+  return;
 
 }
 

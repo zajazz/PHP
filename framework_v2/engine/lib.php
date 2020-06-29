@@ -72,7 +72,6 @@ function render($template, $params = [], $layout = 'main.php') : string
     'title' => $title,
     'user' => $_SESSION['user'],
     'login' => $_SESSION['login'],
-    'cartCount' => count($_SESSION['cart']),
     ]);
 }
 
@@ -121,4 +120,30 @@ function getMsg()
 function isAdmin()
 {
   return !empty($_SESSION['user']['is_admin']);
+}
+
+function getMenu()
+{
+  return '
+  <ul class="navbar-nav mr-auto">
+    <li class="nav-item"><a class="nav-link mr-n4 my-n3" href="/">Главная</a></li>
+    <li class="nav-item"><a class="nav-link mr-n4 my-n3" href="/?p=user">Пользователи</a></li>
+    <li class="nav-item"><a class="nav-link mr-n4 my-n3" href="/?p=product">Товары</a></li>
+    <li class="nav-item"><a class="nav-link my-n3" href="/?p=cart">Корзина<sup id="cart-badge" class="badge
+    badge-secondary ml-1">{{ cartCount }}</sup></a></li>
+  </ul>';
+}
+
+function getCartCount() : string
+{
+  return count($_SESSION['cart']);
+}
+
+function getIdPost()
+{
+  if (empty($_POST['id'])) {
+    return 0;
+  }
+
+  return (int)$_POST['id'];
 }

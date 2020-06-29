@@ -9,8 +9,6 @@
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
-
-  <!--  <script crossorigin="anonymous" src="https://kit.fontawesome.com/d026af0d1d.js"></script>-->
 </head>
 <body class="d-flex flex-column min-vh-100">
 <div id="app">
@@ -21,13 +19,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbar1">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item"><a class="nav-link mr-n4 my-n3" href="/">Главная</a></li>
-          <li class="nav-item"><a class="nav-link mr-n4 my-n3" href="/?p=user">Пользователи</a></li>
-          <li class="nav-item"><a class="nav-link mr-n4 my-n3" href="/?p=product">Товары</a></li>
-          <li class="nav-item"><a class="nav-link my-n3" href="/?p=cart">Корзина<sup class="badge badge-secondary ml-1
-        ">{{ cartCount }}</sup></a></li>
-        </ul>
+        <?= getMenu() ?>
 
         <? if (empty($login)): ?>
           <a href="?p=auth" class="btn btn-outline-info my-2 my-sm-0">Вход</a>
@@ -58,7 +50,7 @@
     el: '#app',
     data: {
       productId: <?= getId() ?>,
-      cartCount: <?= $cartCount ?>,
+      cartCount: <?= getCartCount() ?>,
     },
     methods: {
       addToCart() {
@@ -73,7 +65,7 @@
     },
   });
 </script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 </body>
 </html>

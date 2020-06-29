@@ -17,9 +17,12 @@
         <div>
           <a href="?p=product&a=one&id=<?= $product['id'] ?>" class="btn btn-primary my-1">Подробно</a>
           <a href="?p=cart&a=add&id=<?= $product['id'] ?>" class="btn btn-primary my-1">В корзину</a>
+          <button class="btn btn-primary my-1" onclick="send(<?= $product['id'] ?>)">В корзину (jQ)</button>
         </div>
       </div>
     </div>
   </div>
 <?php endforeach;?>
 </div>
+
+<script src="/js/jquery.js"></script>
