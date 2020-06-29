@@ -29,13 +29,33 @@ function addAction(): void
   redirect();
 }
 
+function axiosAddAction() : void
+{
+  header('Content-Type: application/json');
+  if (empty($_POST['productId'])) {
+    echo json_encode(['success' => false]);
+    return;
+  }
+  $error = addProduct((int)$_POST['productId']);
+
+  if (!empty($error)) {
+    echo json_encode(['success' => false]);
+    return;
+  }
+
+  echo json_encode(['success' => true, 'cartCount' => count($_SESSION['cart'])]);
+  return;
+
+}
+
+
 function addProduct($id)
 {
   if (empty($id)) {
     return 'Не передан id товара';
   }
 
-  $sql = 'SELECT title, price FROM products WHERE id = ' . getId();
+  $sql = 'SELECT title, price FROM products WHERE id = ' . $id;
   $result = mysqli_query(getLink(), $sql);
   $row = mysqli_fetch_assoc($result);
 
@@ -44,7 +64,7 @@ function addProduct($id)
   }
 
   if (!empty($_SESSION['cart'][$id]['count'])) {
-    $_SESSION['cart'][getId()]['count']++;
+    $_SESSION['cart'][$id]['count']++;
     return '';
   }
 

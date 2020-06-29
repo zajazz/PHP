@@ -25,7 +25,7 @@ $sum = 0;
         <div class="col-2"><?= $item['price'] ?></div>
         <div class="col-2"><?= $item['count'] ?></div>
         <div class="col-2">
-          <a href="?p=addtocart&a=cart&id=<?= $id ?>" class="btn btn-outline-secondary my-1">
+          <a href="?p=cart&a=add&id=<?= $id ?>" class="btn btn-outline-secondary my-1">
             <i class="fas fa-plus"></i></a></div>
         <div class="col-2"><a href="?p=cart&a=del&id=<?= $id ?>" class="btn btn-outline-secondary my-1">
             <i class="fas fa-minus"></i></a></div>

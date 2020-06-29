@@ -12,7 +12,8 @@
   <div class="col-lg-6 mb-3 ">
     <p><?= $product['info'] ?></p>
     <h3><?= $product['price'] ?></h3>
-    <a href="?p=cart&a=add&id=<?= $product['id'] ?>" class="btn btn-primary my-1">В корзину</a>
+<!--<a href="?p=cart&a=add&id=--><?//= $product['id'] ?><!--" class="btn btn-primary my-1">В корзину</a>-->
+    <button class="btn btn-primary my-1" @click="addToCart">В корзину (axios)</button>
   </div>
 <div class="col w-100 mb-5"></div>
 </div>
@@ -33,3 +34,4 @@
     </div>
   </div>
 </form>
+
