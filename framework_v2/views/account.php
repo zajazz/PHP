@@ -7,4 +7,7 @@
 
 <h3>Welcome, <?= $user['fio'] ?></h3>
 <div class="text-success m-2"><?= $msg ?></div>
+<div>
+  <p><a href="?p=order">Заказы</a></p>
+</div>
 

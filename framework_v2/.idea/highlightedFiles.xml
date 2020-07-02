@@ -5,6 +5,7 @@
       <node color="4" path="$PROJECT_DIR$/engine/lib.php" />
       <node color="3" path="$PROJECT_DIR$/pages" />
       <node color="1" path="$PROJECT_DIR$/views" />
+      <node color="4" path="$PROJECT_DIR$/views/layouts/main.php" />
     </files>
     <colors>
       <color name="Color 1" value="#ffd0c6" enabled="true" />
