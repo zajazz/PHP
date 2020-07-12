@@ -4,7 +4,6 @@
  */
 ?>
 <h1 class="h1 mt-5 mb-3"><?= $title ?></h1>
-<div class="text-danger m-2"><?= $msg ?></div>
 <form method="POST" action="?p=auth&a=login">
   <div class="row">
     <div class="col-4">

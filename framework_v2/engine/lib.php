@@ -2,8 +2,8 @@
 function getLink(): mysqli
 {
   static $link;
-  if(empty($link)) {
-    $link = mysqli_connect('localhost', 'root', 'root','gbphp');
+  if (empty($link)) {
+    $link = mysqli_connect('localhost', 'root', 'root', 'gbphp');
   }
   return $link;
 }
@@ -26,15 +26,38 @@ function run()
     $action = $_GET['a'];
   }
 
-  $action .= 'Action';
-/**
- * TODO: создать здесь метод, который проверяет, есть ли у пользователя права на выполнение этой функции
- * если нет, то редиректить на другую страницу
- */
-  if (!function_exists($action)) {
-    $action = 'indexAction';
+  if (!function_exists($action . 'Action')) {
+    $action = 'index';
   }
+
+  $error = checkAvailability($action, $page);
+  if (!empty($error)) {
+    setMsg($error);
+    redirect('?p=auth');
+    exit;
+  }
+
+  $action .= 'Action';
   return $action();
+}
+
+function checkAvailability($action, $page)
+{
+  $adminActions = getSettings('admin_actions');
+  if (array_key_exists($page, $adminActions)) {
+    if (in_array($action, $adminActions[$page])) {
+      if (!isAdmin()) return 'Права на доступ к этой странице ограничены';
+    }
+  }
+
+  $authActions = getSettings('auth_actions');
+  if (array_key_exists($page, $authActions)) {
+    if (in_array($action, $authActions[$page])) {
+      if (!isAuth()) return 'Авторизуйтесь, чтобы выполнить это действие';
+    }
+  }
+
+  return '';
 }
 
 /**
@@ -42,24 +65,22 @@ function run()
  * @param string $file
  * @return string
  */
-function getFileName(string $file) : string
+function getFileName(string $file): string
 {
   return dirname(__DIR__) . '/pages/' . $file . '.php';
 }
 
-function getId() : int
+function getId(): int
 {
   if (!empty($_GET['id'])) {
-    return (int) $_GET['id'];
+    return (int)$_GET['id'];
   }
   return 0;
 }
 
-function render($template, $params = [], $layout = 'main.php') : string
+function render($template, $params = [], $layout = 'main.php'): string
 {
-  $params['msg'] = getMsg();
   $content = renderTemplate($template, $params);
-
   $layout = 'layouts/' . $layout;
   $title = 'Welcome';
 
@@ -67,15 +88,21 @@ function render($template, $params = [], $layout = 'main.php') : string
     $title = $params['title'];
   }
 
+  $msg = getMsg();
+  $modal = '';
+  if (!empty($msg)) {
+    $modal = getModal($msg);
+  }
+
   return renderTemplate($layout, [
     'content' => $content,
     'title' => $title,
     'user' => $_SESSION['user'],
-    'login' => $_SESSION['login'],
-    ]);
+    'modal' => $modal,
+  ]);
 }
 
-function renderTemplate($template, $params = []) : string
+function renderTemplate($template, $params = []): string
 {
   ob_start();
   extract($params);
@@ -83,26 +110,41 @@ function renderTemplate($template, $params = []) : string
   return ob_get_clean();
 }
 
-function redirect($path = '') : void
+/**
+ * Возвращает html-код модального окна
+ * @param string $content
+ * @param bool $mode переключатель отображения окна (true - показать, false - cкрыть)
+ * @return string
+ */
+function getModal($content, $mode = true)
+{
+  $class = ($mode) ? 'd-block' : '';
+  return renderTemplate('patterns/modal.php', [
+    'content' => $content,
+    'mode' => $class,
+  ]);
+}
+
+function redirect($path = ''): void
 {
   if (!empty($path)) {
     header("Location: {$path}");
     return;
   }
 
-  if(isset($_SERVER['HTTP_REFERER'])) {
+  if (isset($_SERVER['HTTP_REFERER'])) {
     header("Location: {$_SERVER['HTTP_REFERER']}");
     return;
   }
   header("Location: /");
 }
 
-function clearString(string $str) : string
+function clearString(string $str): string
 {
   return mysqli_real_escape_string(getLink(), strip_tags(trim($str)));
 }
 
-function setMsg($msg) : void
+function setMsg($msg): void
 {
   $_SESSION['msg'] = $msg;
 }
@@ -122,20 +164,23 @@ function isAdmin()
   return !empty($_SESSION['user']['is_admin']);
 }
 
-function getMenu()
+function isAuth()
 {
-  return '
-  <ul class="navbar-nav mr-auto">
-    <li class="nav-item"><a class="nav-link mr-n4 my-n3" href="/">Главная</a></li>
-    <li class="nav-item"><a class="nav-link mr-n4 my-n3" href="/?p=user">Пользователи</a></li>
-    <li class="nav-item"><a class="nav-link mr-n4 my-n3" href="/?p=product">Товары</a></li>
-    <li class="nav-item"><a class="nav-link my-n3" href="/?p=cart">Корзина<sup id="cart-badge" class="badge
-    badge-secondary ml-1">{{ cartCount }}</sup></a></li>
-  </ul>';
+  return !empty($_SESSION['login']);
 }
 
-function getCartCount() : string
+function getMenu()
 {
+  $menuTemplate = 'patterns/';
+  $menuTemplate .= isAdmin() ? 'adminMenu.php' : 'userMenu.php';
+  return renderTemplate($menuTemplate);
+}
+
+function getCartCount(): string
+{
+  if (empty($_SESSION['cart'])) {
+    return 0;
+  }
   return count($_SESSION['cart']);
 }
 
@@ -146,4 +191,19 @@ function getIdPost()
   }
 
   return (int)$_POST['id'];
+}
+
+function getAuthSection()
+{
+  if (isAuth()) {
+    return renderTemplate('patterns/navAccount.php', [
+      'user' => $_SESSION['user'],
+    ]);
+  }
+  return renderTemplate('patterns/navAuth.php');
+}
+
+function getCurrency()
+{
+  return getSettings('currency');
 }

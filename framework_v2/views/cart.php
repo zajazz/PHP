@@ -22,7 +22,7 @@ $sum = 0;
     <div class="card bg-light my-2 px-2 py-1" >
       <div class="row mb-1 align-items-center">
         <div class="col-4"><a href="?p=product&a=one&id=<?= $id ?>" class="text-dark"><?= $item['title'] ?></a></div>
-        <div class="col-2"><?= $item['price'] ?></div>
+        <div class="col-2"><?= $item['price'] ?> <?= getCurrency() ?></div>
         <div class="col-2"><?= $item['count'] ?></div>
         <div class="col-2">
           <a href="?p=cart&a=add&id=<?= $id ?>" class="btn btn-outline-secondary my-1">
@@ -36,8 +36,11 @@ $sum = 0;
     <div class="row mb-1">
       <div class="col-8"></div>
       <div class="col-2 text-right ">Total:</div>
-      <div class="col-2"><?= $sum ?></div>
+      <div class="col-2"><?= $sum ?> <?= getCurrency() ?></div>
     </div>
+  </div>
+  <div class="row mb-1">
+    <div class="col text-right mt-3"><a class="btn btn-warning btn-lg px-5" href="?p=order&a=make">Make order</a></div>
   </div>
 
 <? endif; ?>
