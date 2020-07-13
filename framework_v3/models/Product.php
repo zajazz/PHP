@@ -5,7 +5,7 @@ namespace App\models;
 class Product extends Model
 {
   public $id;
-  public $name;
+  public $title;
   public $price;
   public $info;
 

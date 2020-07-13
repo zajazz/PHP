@@ -4,9 +4,14 @@ namespace App\models;
 class User extends Model
 {
   public $id;
-  public $name;
+  public $fio;
   public $login;
-  public $password;
+  protected $password;
+  public $is_admin;
+
+  public function setPassword($password) {
+    $this->password = password_hash($password, PASSWORD_DEFAULT);
+  }
 
   public function getTableName(): string
   {
