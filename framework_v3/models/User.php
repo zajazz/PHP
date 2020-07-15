@@ -13,7 +13,7 @@ class User extends Model
     $this->password = password_hash($password, PASSWORD_DEFAULT);
   }
 
-  public function getTableName(): string
+  public static function getTableName(): string
   {
     return 'users';
   }

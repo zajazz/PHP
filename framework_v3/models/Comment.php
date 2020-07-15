@@ -12,7 +12,7 @@ class Comment extends Model
   /**
    * @inheritDoc
    */
-  public function getTableName(): string
+  public static function getTableName(): string
   {
     return 'comments';
   }

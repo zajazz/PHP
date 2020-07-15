@@ -6,74 +6,73 @@ use App\services\DB;
 abstract class Model
 {
   /**
-   * @var DB
-   */
-  protected $db;
-
-  /**
    * Return table name
    * @return string
    */
-  abstract public function getTableName(): string;
+  abstract public static function getTableName(): string;
 
-  public function __construct()
+  /**
+   * @return DB
+   */
+  protected static function getDB()
   {
-    $this->db = DB::getInstance();
+    return DB::getInstance();
   }
 
-  public function getOne($id)
+  public static function getOne($id)
   {
-    $sql = "SELECT * FROM `" . $this->getTableName() . "` WHERE id = :id";
-    $result = $this->db->find($sql, [':id' => $id]);
+    $sql = "SELECT * FROM " . static::getTableName() . " WHERE id = :id";
+    return static::getDB()->findObject($sql, static::class, [':id' => $id]);
 
-    return $this->createObj($result);
   }
-  public function getAll()
+  public static function getAll()
   {
-    $sql = "SELECT * FROM `{$this->getTableName()}`";
-    $rows = $this->db->findAll($sql);
-    return array_map(function ($row) {
-      return $this->createObj($row);
-    }, $rows);
+    $sql = "SELECT * FROM " . static::getTableName();
+    return static::getDB()->findObjects($sql, static::class);
   }
+
   public function delete($id)
   {
-    $sql = "DELETE FROM `" . $this->getTableName() . "` WHERE id = :id";
-    return $this->db->execute($sql, [':id' => $id]);
+    $sql = "DELETE FROM " . static::getTableName() . " WHERE id = :id";
+    return static::getDB()->execute($sql, [':id' => $id]);
   }
   public function save()
   {
     if (empty($this->id)) {
-      return $this->insert();
+      $this->insert();
     }
-    return $this->update($this->id);
+    return $this->update();
   }
 
   protected function insert()
   {
-    $fields = '';
-    $values = '';
+    $columns = [];
     $params = [];
 
-    foreach ($this->getFields() as $key => $value) {
-      if (!empty($value)) {
-        $fields .= "`$key`, ";
-        $values .= ":$key, ";
+    foreach ($this as $key => $value) {
+      if (isset($value) && $key !== 'id') {
+        $columns[] = $key;
         $params[':' . $key] = $value;
       }
     }
-    $fields = substr($fields, 0, -2);
-    $values = substr($values, 0, -2);
 
-    $sql = "INSERT INTO `{$this->getTableName()}` ($fields) VALUES ($values)";
-    return $this->db->insert($sql, $params);
+    $sql = sprintf(
+      "INSERT INTO %s (%s) VALUES (%s)",
+      static::getTableName(),
+      implode(', ', $columns),
+      implode(', ', array_keys($params))
+    );
+
+    $id = static::getDB()->insert($sql, $params);
+
+    if ($id !== -1) $this->id = $id;
   }
-  protected function update($id)
+  protected function update()
   {
     $updateStr = '';
     $params = [];
 
-    foreach ($this->getFields() as $key => $value) {
+    foreach ($this as $key => $value) {
       if (!empty($value)) {
         $updateStr .= ($key !== 'id') ? "`$key` = :$key, " : '';
         $params[':' . $key] = $value;
@@ -81,29 +80,7 @@ abstract class Model
     }
     $updateStr = substr($updateStr, 0, -2);
 
-    $sql = "UPDATE `{$this->getTableName()}` SET $updateStr WHERE id = :id";
-    return $this->db->execute($sql, $params);
+    $sql = "UPDATE ". static::getTableName() . " SET $updateStr WHERE id = :id";
+    return static::getDB()->execute($sql, $params);
   }
-
-  private function getFields()
-  {
-    $fields = [];
-    foreach ($this as $key => $value) {
-      if ($key !== 'db') {
-        $fields[$key] = $value;
-      }
-    }
-
-    return $fields;
-  }
-  private function createObj($result)
-  {
-    $obj = new static();
-    foreach ($this->getFields() as $key => $value) {
-      $obj->$key = $result[$key];
-    }
-
-    return $obj;
-  }
-
 }
