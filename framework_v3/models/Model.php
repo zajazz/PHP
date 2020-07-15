@@ -6,57 +6,81 @@ use App\services\DB;
 abstract class Model
 {
   /**
-   * @var DB
-   */
-  protected $db;
-  protected $tableName;
-
-  /**
    * Return table name
    * @return string
    */
-  abstract public function getTableName(): string;
+  abstract public static function getTableName(): string;
 
-  public function __construct()
+  /**
+   * @return DB
+   */
+  protected static function getDB()
   {
-    $this->db = DB::getInstance();
+    return DB::getInstance();
   }
 
-  public function getOne($id)
+  public static function getOne($id)
   {
-    $sql = "SELECT * FROM `{$this->getTableName()}` WHERE id = :id";
-    return $this->db->find($sql, [':id' => $id]);
+    $sql = "SELECT * FROM " . static::getTableName() . " WHERE id = :id";
+    return static::getDB()->findObject($sql, static::class, [':id' => $id]);
+
+  }
+  public static function getAll()
+  {
+    $sql = "SELECT * FROM " . static::getTableName();
+    return static::getDB()->findObjects($sql, static::class);
   }
 
-  public function getAll()
+  public function delete($id)
   {
-    echo $this->tableName;
-    $sql = "SELECT * FROM `{$this->getTableName()}`";
-    return $this->db->findAll($sql);
+    $sql = "DELETE FROM " . static::getTableName() . " WHERE id = :id";
+    return static::getDB()->execute($sql, [':id' => $id]);
   }
-
-  public function delete()
-  {
-    return;
-  }
-
-  public function insert()
-  {
-    return;
-  }
-
-  public function update()
-  {
-    return;
-  }
-
   public function save()
   {
     if (empty($this->id)) {
-      return $this->insert();
+      $this->insert();
     }
-
     return $this->update();
   }
 
+  protected function insert()
+  {
+    $columns = [];
+    $params = [];
+
+    foreach ($this as $key => $value) {
+      if (isset($value) && $key !== 'id') {
+        $columns[] = $key;
+        $params[':' . $key] = $value;
+      }
+    }
+
+    $sql = sprintf(
+      "INSERT INTO %s (%s) VALUES (%s)",
+      static::getTableName(),
+      implode(', ', $columns),
+      implode(', ', array_keys($params))
+    );
+
+    $id = static::getDB()->insert($sql, $params);
+
+    if ($id !== -1) $this->id = $id;
+  }
+  protected function update()
+  {
+    $updateStr = '';
+    $params = [];
+
+    foreach ($this as $key => $value) {
+      if (!empty($value)) {
+        $updateStr .= ($key !== 'id') ? "`$key` = :$key, " : '';
+        $params[':' . $key] = $value;
+      }
+    }
+    $updateStr = substr($updateStr, 0, -2);
+
+    $sql = "UPDATE ". static::getTableName() . " SET $updateStr WHERE id = :id";
+    return static::getDB()->execute($sql, $params);
+  }
 }

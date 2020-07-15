@@ -5,13 +5,19 @@ namespace App\models;
 class Product extends Model
 {
   public $id;
-  public $name;
+  public $title;
   public $price;
   public $info;
 
-  public function getTableName(): string
+  public static function getTableName(): string
   {
     return 'products';
   }
+  
+//  public function getCategory()
+//  {
+//    $sql = '';
+//    static::getDB()->findObject($sql, Category::class);
+//  }
 
 }
