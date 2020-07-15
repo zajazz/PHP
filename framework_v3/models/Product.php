@@ -13,7 +13,14 @@ class Product extends Model
   {
     return 'products';
   }
-  
+
+  /**
+   * TODO determine echo as json-string for js purposes
+   */
+  public function __toString()
+  {
+    return '';
+  }
 //  public function getCategory()
 //  {
 //    $sql = '';
