@@ -31,10 +31,10 @@ abstract class Model
     return static::getDB()->findObjects($sql, static::class);
   }
 
-  public function delete($id)
+  public function delete()
   {
     $sql = "DELETE FROM " . static::getTableName() . " WHERE id = :id";
-    return static::getDB()->execute($sql, [':id' => $id]);
+    return static::getDB()->execute($sql, [':id' => $this->id]);
   }
   public function save()
   {
@@ -63,9 +63,10 @@ abstract class Model
       implode(', ', array_keys($params))
     );
 
-    $id = static::getDB()->insert($sql, $params);
+    if (static::getDB()->execute($sql, $params)) {
+      $this->id = static::getDB()->getLastInsertId();
+    };
 
-    if ($id !== -1) $this->id = $id;
   }
   protected function update()
   {
@@ -81,6 +82,6 @@ abstract class Model
     $updateStr = substr($updateStr, 0, -2);
 
     $sql = "UPDATE ". static::getTableName() . " SET $updateStr WHERE id = :id";
-    return static::getDB()->execute($sql, $params);
+    static::getDB()->execute($sql, $params);
   }
 }

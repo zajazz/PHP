@@ -67,36 +67,25 @@ class DB
    * Executes SQL statements returning empty result set
    * @param $sql
    * @param array $params
-   * @return int affected rows count or -1 in case of error
+   * @return bool true if success, or false in case of error
    */
   public function execute($sql, $params = [])
   {
     $PDOStatement =$this->query($sql, $params);
 
     if ($PDOStatement->errorCode() === '00000') {
-      return $PDOStatement->rowCount();
+      return true;
     }
 
     // return $PDOStatement->errorInfo();
-    return -1;
+    return false;
   }
-  /**
-   * @param $sql
-   * @param array $params
-   * @return int inserted Id or -1 in case of error
-   */
-  public function insert($sql, $params = [])
-  {
-    $PDOStatement = $this->query($sql, $params);
 
-    if ($PDOStatement->errorCode() === '00000'){
-      return $this->connect->lastInsertId();
-    }
+  public function getLastInsertId() {
 
-    // return $PDOStatement->errorInfo();
-    return -1;
-
+    return $this->connect->lastInsertId();
   }
+
   public function findObject($sql, $class, $params = [])
   {
     $PDOStatement = $this->query($sql, $params);

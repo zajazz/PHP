@@ -1,0 +1,28 @@
+* {
+  /*color: blue;*/
+}
+a {
+  color: #17a2b8;
+}
+.bb {
+  border: 1px solid red;
+}
+.sign {
+  width: 2.5rem;
+}
+
+.close-btn {
+  outline: none; z-index: 100; right: 20px;
+}
+.pointer {
+  cursor: pointer;
+}
+.table-row:hover {
+  /*color: #0c5460;*/
+  /*background-color: #bee5eb!important;*/
+  color: #856404;
+  background-color: #ffeeba!important;
+}
+.active-status {
+  background-color: rgba(212, 237, 218, 0.42) !important;
+}
