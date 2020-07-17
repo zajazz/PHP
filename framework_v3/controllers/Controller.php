@@ -50,7 +50,7 @@ abstract class Controller
   protected function getPage()
   {
     $page = 1;
-    if (!empty((int)$_GET['p'])) {
+    if (!empty($_GET['p'])) {
       $page = (int)$_GET['p'];
     }
 

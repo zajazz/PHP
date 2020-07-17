@@ -73,6 +73,7 @@ function makeAction()
   if (empty($_SESSION['cart'])) {
     setMsg('Корзина пуста');
     redirect('?p=cart');
+    return;
   }
 
   // Данные с формы
@@ -83,6 +84,8 @@ function makeAction()
     if (!empty($error)) {
       setMsg($error);
       redirect('?p=order&a=make');
+      return;
+
     }
 
     $orderId = $_SESSION['orderID'];
@@ -90,6 +93,8 @@ function makeAction()
     unset($_SESSION['cart']);
     unset($_SESSION['orderID']);
     redirect('?p=order&a=one&id=' . $orderId);
+    return;
+
   }
 
   // Форма подтверждения заказа
@@ -113,7 +118,7 @@ function addNewOrder()
   $date = date("Y-m-d H:i:s");
   $userId = $_SESSION['user']['id'];
 
-  $sql = "INSERT INTO orders (user_id, date, address, phone, status_id) 
+  $sql = "INSERT INTO orders (user_id, date, address, phone, status_id)
             VALUES ($userId, '{$date}', '{$address}', '{$phone}', 1)";
   mysqli_query(getLink(), $sql);
 
@@ -166,7 +171,7 @@ function oneAction()
             WHERE orders.id = $id";
   $result = mysqli_query(getLink(), $sql);
   $order = mysqli_fetch_assoc($result);
-  
+
   if (empty($order)) {
     setMsg('Order not found');
     redirect();
@@ -197,16 +202,9 @@ function oneAction()
   ]);
 }
 
-function userAction()
-{
-  echo "User " . getId() . " order list";
-
-}
-
 function statusAction()
 {
-//  form.append('orderId', orderId);
-//  form.append('stid', stid);
+
   header('Content-Type: application/json');
   if (empty($_POST['orderId']) || empty($_POST['stid'])) {
     echo json_encode(['success' => false, 'error' => 'Not enough data']);

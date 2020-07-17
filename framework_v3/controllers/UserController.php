@@ -4,10 +4,12 @@
 namespace App\controllers;
 
 use App\models\User;
+use App\services\Paginator;
 
 class UserController extends Controller
 {
   protected $actionDefault = 'all';
+  protected $baseRoot = '/?c=user';
 
   public function getDefaultAction(): string
   {
@@ -26,10 +28,13 @@ class UserController extends Controller
 
   public function allAction()
   {
+    $paginator = new Paginator();
+    $user = new User();
+    $paginator->setItems($user, $this->baseRoot, $this->getPage());
     return $this->render(
       'users',
       [
-        'users' => User::getAll(),
+        'paginator' => $paginator,
       ]
     );
   }
