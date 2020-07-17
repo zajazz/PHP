@@ -84,4 +84,17 @@ abstract class Model
     $sql = "UPDATE ". static::getTableName() . " SET $updateStr WHERE id = :id";
     static::getDB()->execute($sql, $params);
   }
+  
+  public function getModelsByPage($page = 1)
+  {
+    $start = ($page - 1) * 10;
+    $sql = "SELECT * FROM ". static::getTableName() ." LIMIT {$start}, 10";
+    return static::getDB()->findObjects($sql, static::class);
+  }
+  
+  public function getCountList()
+  {
+    $sql = "SELECT count(*) AS `count` FROM ". static::getTableName();
+    return static::getDB()->find($sql)['count'];
+  }
 }
