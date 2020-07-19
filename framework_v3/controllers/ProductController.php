@@ -36,30 +36,33 @@ class ProductController extends Controller
       $this->redirect('/');
       return;
     }
-    if (empty($this->productPerPage)) $this->productPerPage = 1;
 
-    $current = $this->getPage();
-    $pages = ceil(count($products) / $this->productPerPage);
+    // TODO change pagination for Product to class-based
 
-    if ($current > $pages) $current = $pages;
-    $paging = '';
-    if ($pages > 1) {
-      $paging = $this->renderTemplate(
-        'patterns/paging',
-        [
-          'pages' => $pages,
-          'current' => $current,
-        ]
-      );
-    }
-    $products = array_chunk($products, $this->productPerPage);
+  //    if (empty($this->productPerPage)) $this->productPerPage = 1;
+  //
+  //    $current = $this->getPage();
+  //    $pages = ceil(count($products) / $this->productPerPage);
+  //
+  //    if ($current > $pages) $current = $pages;
+  //    $paging = '';
+  //    if ($pages > 1) {
+  //      $paging = $this->renderTemplate(
+  //        'patterns/paging',
+  //        [
+  //          'pages' => $pages,
+  //          'current' => $current,
+  //        ]
+  //      );
+  //    }
+  //    $products = array_chunk($products, $this->productPerPage);
 
     return $this->render(
       'products',
       [
-        'products' => $products[$current-1],
+        'products' => $products,
         'img' => $this->img_folder,
-        'paging' => $paging,
+//        'paging' => $paging,
       ]
     );
   }

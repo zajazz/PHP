@@ -26,3 +26,11 @@ a {
 .active-status {
   background-color: rgba(212, 237, 218, 0.42) !important;
 }
+.img-wrapper {
+  height: 180px;
+}
+.img-over {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}

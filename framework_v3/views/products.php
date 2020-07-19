@@ -15,7 +15,10 @@
   <?php foreach($products as $product) :?>
     <div class="col-6 col-md-4 col-lg-3 d-flex align-items-stretch">
       <div class="card bg-light mb-3">
-        <img src="<?php echo $img . $product->img; ?>" class="card-img-top p-1" alt="<?= $product->title ?>">
+        <div class="img-wrapper m-1">
+          <img src="<?php echo $img . $product->img; ?>" class="img-over card-img-top" alt="<?= $product->title
+          ?>">
+        </div>
         <div class="card-body d-flex flex-column">
           <h5 class="card-title"><a href="?c=product&a=one&id=<?= $product->id ?>"><?= $product->title ?></a></h5>
           <p class="card-text flex-grow-1"><?= $product->info ?></p>
