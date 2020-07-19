@@ -3,9 +3,22 @@
 
 namespace App\controllers;
 
+use App\services\IRenderer;
+use App\services\RenderTemplate;
 
 abstract class Controller
 {
+  protected $renderer;
+
+  /**
+   * Controller constructor.
+   * @param $renderer
+   */
+  public function __construct(IRenderer $renderer)
+  {
+    $this->renderer = $renderer;
+  }
+
   abstract public function getDefaultAction(): string;
 
   public function run($action)
@@ -21,21 +34,9 @@ abstract class Controller
 
     return $this->$method();
   }
-
-  public function render($template, $params = [])
+  public function render($template, $params)
   {
-    $content = $this->renderTemplate($template, $params);
-    return $this->renderTemplate('layouts/main', [
-      'content' => $content,
-    ]);
-  }
-
-  public function renderTemplate($template, $params = [])
-  {
-    ob_start();
-    extract($params);
-    include dirname(__DIR__) . '/views/' . $template . '.php';
-    return ob_get_clean();
+    return $this->renderer->render($template, $params);
   }
 
   protected function getId()
@@ -56,13 +57,6 @@ abstract class Controller
 
     return $page;
   }
-
-  /**
-   * Returns modal window html
-   * @param string $content
-   * @param bool $mode visibility switcher (true - show, false - hidden until an explicit call)
-   * @return string
-   */
 
   public function redirect($path = ''): void
   {
