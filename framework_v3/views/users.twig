@@ -1,0 +1,12 @@
+{# @var array title  #}
+{# @var App\services\Paginator paginator #}
+
+
+
+{% extends 'layouts/main.twig' %}
+
+{% block content %}
+  {% for user in paginator.getItems %}
+  <p><a href="?c=user&a=one&id={{ user.id }}">{{ user.fio }}</a></p>
+  {% endfor %}
+{% endblock %}

@@ -85,10 +85,10 @@ abstract class Model
     static::getDB()->execute($sql, $params);
   }
   
-  public function getModelsByPage($page = 1)
+  public function getModelsByPage(int $page, int $countPerPage)
   {
-    $start = ($page - 1) * 10;
-    $sql = "SELECT * FROM ". static::getTableName() ." LIMIT {$start}, 10";
+    $start = ($page - 1) * $countPerPage;
+    $sql = "SELECT * FROM ". static::getTableName() ." LIMIT {$start}, {$countPerPage}";
     return static::getDB()->findObjects($sql, static::class);
   }
   

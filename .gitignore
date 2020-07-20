@@ -1,12 +1,12 @@
 *.log
 tmp/*
-*.idea/*
+.idea/*
 */.idea/*
-*framework_v2/.idea/*
 *tmp*
 */node_modules/*
 */public/img/*
-
+*/composer.phar
+*/vendor/*
 
 
 

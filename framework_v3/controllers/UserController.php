@@ -18,10 +18,12 @@ class UserController extends Controller
 
   public function oneAction()
   {
+    $user = User::getOne($this->getId());
     return $this->render(
       'user',
       [
-        'user' => User::getOne($this->getId()),
+        'user' => $user,
+        'title' => 'User ' . $user->login,
       ]
     );
   }
@@ -35,6 +37,7 @@ class UserController extends Controller
       'users',
       [
         'paginator' => $paginator,
+        'title' => 'Users'
       ]
     );
   }

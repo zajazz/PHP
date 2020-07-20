@@ -4,13 +4,14 @@
 namespace App\controllers;
 
 use App\models\Product;
+use App\services\Paginator;
 
 class ProductController extends Controller
 {
   protected $actionDefault = 'all';
   protected $img_folder = '/img/';
   protected $img_size = [1048576, '1Mb'];
-  public $productPerPage = 10;
+  private $baseRoot = '/?c=product';
 
   public function getDefaultAction(): string
   {
@@ -19,52 +20,32 @@ class ProductController extends Controller
 
   public function oneAction()
   {
+    $product = Product::getOne($this->getId());
     return $this->render(
       'product',
       [
-        'product' => Product::getOne($this->getId()),
+        'product' => $product,
         'img' => $this->img_folder,
+        'title' => $product->title,
       ]
     );
   }
 
   public function allAction()
   {
-    $products = Product::getAll();
-
-    if (empty($products)) {
-      $this->redirect('/');
-      return;
-    }
-
-    // TODO change pagination for Product to class-based
-
-  //    if (empty($this->productPerPage)) $this->productPerPage = 1;
-  //
-  //    $current = $this->getPage();
-  //    $pages = ceil(count($products) / $this->productPerPage);
-  //
-  //    if ($current > $pages) $current = $pages;
-  //    $paging = '';
-  //    if ($pages > 1) {
-  //      $paging = $this->renderTemplate(
-  //        'patterns/paging',
-  //        [
-  //          'pages' => $pages,
-  //          'current' => $current,
-  //        ]
-  //      );
-  //    }
-  //    $products = array_chunk($products, $this->productPerPage);
+    $paginator = new Paginator();
+    $product = new Product();
+    $paginator->setItems($product, $this->baseRoot, $this->getPage());
 
     return $this->render(
       'products',
       [
-        'products' => $products,
+        'paginator' => $paginator,
         'img' => $this->img_folder,
-//        'paging' => $paging,
+        'title' => 'Catalog',
       ]
     );
+
   }
 
   public function changeAction()
