@@ -1,0 +1,28 @@
+{# @var App\models\Product product #}
+{# @var string img #}
+{# @var string error #}
+
+{% extends 'layouts/main.twig' %}
+
+{% block pagination %}
+{% endblock %}
+
+{% block content %}
+  {% if error is defined %}
+    <div class="row">
+      <div class="col">{{ error }}</div>
+    </div>
+  {% endif %}
+  <div class="row">
+    <div class="col-lg-6 mb-3 ">
+      <img src="{{ img }}{{ product.img }}" alt="{{ product.title }}" class="img-thumbnail mb-n1">
+    </div>
+    <div class="col-lg-6 mb-3 ">
+      <p>{{ product.info }}</p>
+      <h3>{{ product.price }} &#8381;</h3>
+      <a href="?c=product&a=change&id={{ product.id }}" class="btn btn-info">Change</a>
+      <a href="?c=product&a=remove&id={{ product.id }}" class="btn btn-info">Delete</a>
+    </div>
+    <div class="col w-100 mb-5"></div>
+  </div>
+{% endblock %}
