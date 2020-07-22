@@ -4,7 +4,10 @@
 namespace App\services;
 
 
+use App\entities\Entity;
 use App\models\Model;
+use App\repositories\ProductRepository;
+use App\repositories\Repository;
 
 class Paginator
 {
@@ -15,10 +18,10 @@ class Paginator
   public $current;
 
 
-  public function setItems(Model $model, $baseRoot, $pageNumber = 1)
+  public function setItems(Repository $repository, $baseRoot, $pageNumber = 1)
   {
-    $this->count = $model->getCountList();
-    $this->items = $model->getModelsByPage($pageNumber, $this->countPerPage);
+    $this->count = $repository->getCountList();
+    $this->items = $repository->getModelsByPage($pageNumber, $this->countPerPage);
     $this->baseRoot = $baseRoot;
     $this->current = $pageNumber;
   }
@@ -36,17 +39,17 @@ class Paginator
     $urls = [];
 
     for ($i = 1; $i <= $counter; $i++) {
-      $urls[$i] = $this->baseRoot . '&p=' . $i;
+      $urls[$i] = $this->baseRoot . '?p=' . $i;
     }
     return $urls;
   }
 
   public function getNextUrl() {
-    return $this->baseRoot . '&p=' . ($this->current + 1);
+    return $this->baseRoot . '?p=' . ($this->current + 1);
   }
 
   public function getPrevUrl() {
-    return $this->baseRoot . '&p=' . ($this->current - 1);
+    return $this->baseRoot . '?p=' . ($this->current - 1);
   }
 
 

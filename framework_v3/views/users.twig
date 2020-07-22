@@ -7,6 +7,6 @@
 
 {% block content %}
   {% for user in paginator.getItems %}
-  <p><a href="?c=user&a=one&id={{ user.id }}">{{ user.fio }}</a></p>
+  <p><a href="/user/one?id={{ user.id }}">{{ user.fio }}</a></p>
   {% endfor %}
 {% endblock %}

@@ -71,6 +71,7 @@ class DB
    */
   public function execute($sql, $params = [])
   {
+
     $PDOStatement =$this->query($sql, $params);
 
     if ($PDOStatement->errorCode() === '00000') {

@@ -3,15 +3,16 @@
 
 namespace App\controllers;
 
-use App\models\Product;
+use App\entities\Product;
+use App\repositories\ProductRepository;
 use App\services\Paginator;
+use App\services\ProductService;
 
 class ProductController extends Controller
 {
   protected $actionDefault = 'all';
-  protected $img_folder = '/img/';
-  protected $img_size = [1048576, '1Mb'];
-  private $baseRoot = '/?c=product';
+  protected $imgFolder = '/img/';
+  private $baseRoot = '/product';
 
   public function getDefaultAction(): string
   {
@@ -20,12 +21,12 @@ class ProductController extends Controller
 
   public function oneAction()
   {
-    $product = Product::getOne($this->getId());
+    $product = (new ProductRepository())->getOne($this->getId());
     return $this->render(
       'product',
       [
         'product' => $product,
-        'img' => $this->img_folder,
+        'img' => $this->imgFolder,
         'title' => $product->title,
       ]
     );
@@ -34,14 +35,13 @@ class ProductController extends Controller
   public function allAction()
   {
     $paginator = new Paginator();
-    $product = new Product();
-    $paginator->setItems($product, $this->baseRoot, $this->getPage());
+    $paginator->setItems(new ProductRepository(), $this->baseRoot, $this->getPage());
 
     return $this->render(
       'products',
       [
         'paginator' => $paginator,
-        'img' => $this->img_folder,
+        'img' => $this->imgFolder,
         'title' => 'Catalog',
       ]
     );
@@ -50,28 +50,28 @@ class ProductController extends Controller
 
   public function changeAction()
   {
-    $product = Product::getOne($this->getId());
+    $product = (new ProductRepository())->getOne($this->getId());
 
     // form data handling
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-          $error = $this->saveProduct($product);
+          $error = (new ProductService())->saveProduct($product, $this->imgFolder);
           if (!empty($error)) {
             return $this->render('productChange', [
               'title' => 'Product change',
               'product' => $product,
-              'img' => $this->img_folder,
+              'img' => $this->imgFolder,
               'error' => $error,
             ]);
           }
-          $this->redirect('?c=product&a=one&id=' . $product->id);
+          $this->redirect('/product/one?id=' . $product->id);
           return;
     }
 
     // show filled product change form
     return $this->render('productChange', [
       'title' => 'Product change',
-      'product' => Product::getOne($this->getId()),
-      'img' => $this->img_folder,
+      'product' => (new ProductRepository())->getOne($this->getId()),
+      'img' => $this->imgFolder,
     ]);
   }
 
@@ -80,7 +80,7 @@ class ProductController extends Controller
     // form data handling
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $product = new Product();
-          $error = $this->saveProduct($product);
+          $error = (new ProductService())->saveProduct($product, $this->imgFolder);
           if (!empty($error)) {
             return $this->render('productAdd', [
               'title' => 'Add new product',
@@ -88,7 +88,7 @@ class ProductController extends Controller
               'error' => $error,
             ]);
           }
-          $this->redirect('?c=product&a=one&id=' . $product->id);
+          $this->redirect('/product/one?id=' . $product->id);
           return;
     }
 
@@ -100,7 +100,7 @@ class ProductController extends Controller
   
   public function removeAction()
   {
-    $product = Product::getOne($this->getId());
+    $product = (new ProductRepository())->getOne($this->getId());
 
     if (empty($product)) {
       $this->redirect();
@@ -110,7 +110,7 @@ class ProductController extends Controller
     $error = $this->removeProduct($product);
 
     if (empty($error)) {
-      $this->redirect('?c=product');
+      $this->redirect('/product/');
       return;
     }
 
@@ -118,67 +118,25 @@ class ProductController extends Controller
       'product',
       [
         'product' => $product,
-        'img' => $this->img_folder,
+        'img' => $this->imgFolder,
         'error' => $error,
       ]
     );
   }
   
-  private function saveProduct($product)
-  {
-    $price = preg_replace('/[^0-9.,]/', '', $_POST['price']);
-    $price = preg_replace('/,/', '.', $price);
 
-    $product->price = $price;
-    $product->title = $_POST['title'];
-    $product->info = $_POST['info'];
-
-    // Loading image
-    if (!empty($_FILES['picture']['name'])) {
-
-      $uniqueName = $this->getUniqueFilename($_FILES['picture']['name']);
-      $filename = dirname(__DIR__) . "/public" . $this->img_folder . $uniqueName;
-
-      if(stripos($_FILES['picture']['type'], 'image') === false) {
-        return 'Incorrect file type. Image expected';
-      }
-
-      if ($_FILES['picture']['size'] > $this->img_size[0]) {
-        return 'File size exceeds ' . $this->img_size[1];
-      }
-
-      if (!copy($_FILES['picture']['tmp_name'], $filename)) {
-        return 'Error occurred while loading the image';
-      }
-      // delete an old image file
-      if (isset($product->img)) {
-        $oldFilename = dirname(__DIR__) . "/public" . $this->img_folder . $product->img;
-        if (file_exists($oldFilename)) {
-          unlink($oldFilename);
-        }
-      }
-
-      $product->img = $uniqueName;
-    }
-
-    if ($product->save() === false) {
-      return 'Error occurred while writing to the database';
-    }
-
-    return '';
-  }
-  private function removeProduct($product)
+  private function removeProduct(Product $product)
   {
     // search the product through active orders
-    if ($product->isInOrders()) {
+    if ((new ProductService())->isInOrders($product)) {
       return 'Unable to delete a product which included in user\'s orders';
     }
 
-    if ($product->delete() === false) {
+    if ((new ProductRepository())->delete($product) === false) {
       return 'Error occurred while writing to the database';
     }
 
-    $filename = dirname(__DIR__) . "/public" . $this->img_folder . $product->img;
+    $filename = dirname(__DIR__) . "/public" . $this->imgFolder . $product->img;
     unlink($filename);
 
     return '';

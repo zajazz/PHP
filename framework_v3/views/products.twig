@@ -13,15 +13,17 @@
           <img src="{{ img }}{{ product.img }}" class="img-over card-img-top" alt="{{ product.title }}">
         </div>
         <div class="card-body d-flex flex-column">
-          <h5 class="card-title"><a href="?c=product&a=one&id={{ product.id }}">{{ product.title }}</a></h5>
+          <h5 class="card-title"><a href="/product/one?id={{ product.id }}">{{ product.title }}</a></h5>
           <p class="card-text flex-grow-1">{{ product.info }}</p>
           <h3>{{ product.price }} &#8381;</h3>
           <div>
-            <a href="?c=product&a=one&id={{ product.id }}" class="btn btn-info my-1">Подробно</a>
+            <a href="/product/one?id={{ product.id }}" class="btn btn-info my-1">Подробно</a>
           </div>
         </div>
       </div>
     </div>
+  {% else %}
+    <p>Catalog is empty</p>
   {% endfor %}
 </div>
 
