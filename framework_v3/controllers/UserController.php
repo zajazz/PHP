@@ -3,13 +3,14 @@
 
 namespace App\controllers;
 
-use App\models\User;
+use App\entities\User;
+use App\repositories\UserRepository;
 use App\services\Paginator;
 
 class UserController extends Controller
 {
   protected $actionDefault = 'all';
-  protected $baseRoot = '/?c=user';
+  protected $baseRoot = '/user';
 
   public function getDefaultAction(): string
   {
@@ -18,7 +19,7 @@ class UserController extends Controller
 
   public function oneAction()
   {
-    $user = User::getOne($this->getId());
+    $user = (new UserRepository())->getOne($this->getId());
     return $this->render(
       'user',
       [
@@ -31,8 +32,7 @@ class UserController extends Controller
   public function allAction()
   {
     $paginator = new Paginator();
-    $user = new User();
-    $paginator->setItems($user, $this->baseRoot, $this->getPage());
+    $paginator->setItems(new UserRepository(), $this->baseRoot, $this->getPage());
     return $this->render(
       'users',
       [

@@ -5,18 +5,22 @@ namespace App\controllers;
 
 use App\services\IRenderer;
 use App\services\RenderTemplate;
+use App\services\Request;
 
 abstract class Controller
 {
   protected $renderer;
+  protected $request;
 
   /**
    * Controller constructor.
-   * @param $renderer
+   * @param IRenderer $renderer
+   * @param Request $request
    */
-  public function __construct(IRenderer $renderer)
+  public function __construct(IRenderer $renderer, Request $request)
   {
     $this->renderer = $renderer;
+    $this->request = $request;
   }
 
   abstract public function getDefaultAction(): string;
@@ -41,21 +45,11 @@ abstract class Controller
 
   protected function getId()
   {
-    $id = 0;
-    if (!empty((int)$_GET['id'])) {
-      $id = (int)$_GET['id'];
-    }
-
-    return $id;
+    return $this->request->getId();
   }
   protected function getPage()
   {
-    $page = 1;
-    if (!empty($_GET['p'])) {
-      $page = (int)$_GET['p'];
-    }
-
-    return $page;
+    return $this->request->getPage();
   }
 
   public function redirect($path = ''): void
@@ -73,10 +67,6 @@ abstract class Controller
     header("Location: /");
   }
 
-  public function getUniqueFilename($file)
-  {
-    $extension = strtolower(substr(strrchr($file, '.'), 1));
-    return uniqid('img_') . "." . $extension;
-  }
+
 
 }

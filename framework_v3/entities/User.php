@@ -1,7 +1,10 @@
 <?php
-namespace App\models;
 
-class User extends Model
+
+namespace App\entities;
+
+
+class User extends Entity
 {
   public $id;
   public $fio;
@@ -11,10 +14,5 @@ class User extends Model
 
   public function setPassword($password) {
     $this->password = password_hash($password, PASSWORD_DEFAULT);
-  }
-
-  public static function getTableName(): string
-  {
-    return 'users';
   }
 }

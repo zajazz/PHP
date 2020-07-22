@@ -1,24 +1,21 @@
 <?php
+
+use App\services\Request;
 use App\services\TwigRenderer;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-$controller = 'product';
-if ($_GET['c']) {
-  $controller = $_GET['c'];
-}
+$request = new Request();
 
-$action = '';
-if (!empty($_GET['a'])) {
-  $action = $_GET['a'];
-}
+$controller = $request->getControllerName();
 
-$controllerName = 'App\\controllers\\' . ucfirst($controller) . 'Controller';
 
-if (class_exists($controllerName)) {
-  /** @var App\controllers\UserController $realController */
-  $realController = new $controllerName(new TwigRenderer());
-  $content = $realController->run($action);
+
+
+if (class_exists($request->getControllerName())) {
+  /** @var App\controllers\Controller $realController */
+  $realController = new $controller(new TwigRenderer(), $request);
+  $content = $realController->run($request->getActionName());
 
   if (!empty($content)) {
     echo $content;
