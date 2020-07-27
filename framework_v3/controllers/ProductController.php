@@ -13,6 +13,7 @@ class ProductController extends Controller
   protected $actionDefault = 'all';
   protected $imgFolder = '/img/';
   private $baseRoot = '/product';
+  protected $request;
 
   public function getDefaultAction(): string
   {
@@ -54,7 +55,11 @@ class ProductController extends Controller
 
     // form data handling
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-          $error = (new ProductService())->saveProduct($product, $this->imgFolder);
+          $error = (new ProductService())->saveProduct(
+            $product,
+            $this->imgFolder,
+            $this->request
+          );
           if (!empty($error)) {
             return $this->render('productChange', [
               'title' => 'Product change',
@@ -80,7 +85,11 @@ class ProductController extends Controller
     // form data handling
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $product = new Product();
-          $error = (new ProductService())->saveProduct($product, $this->imgFolder);
+          $error = (new ProductService())->saveProduct(
+            $product,
+            $this->imgFolder,
+            $this->request
+          );
           if (!empty($error)) {
             return $this->render('productAdd', [
               'title' => 'Add new product',

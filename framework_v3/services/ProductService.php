@@ -13,30 +13,32 @@ class ProductService
 {
   protected $img_size = [1048576, '1Mb'];
 
-  public function saveProduct(Product $product, $imgFolder)
+  public function saveProduct(Product $product, $imgFolder, Request $request)
   {
-    $price = preg_replace('/[^0-9.,]/', '', $_POST['price']);
+
+    $price = preg_replace('/[^0-9.,]/', '', $request->POST('price'));
     $price = preg_replace('/,/', '.', $price);
 
     $product->price = $price;
-    $product->title = $_POST['title'];
-    $product->info = $_POST['info'];
+    $product->title = $request->POST('title');
+    $product->info = $request->POST('info');
 
     // Loading image
-    if (!empty($_FILES['picture']['name'])) {
+    $file = $request->FILES('picture');
+    if (!empty($file['name'])) {
 
-      $uniqueName = $this->getUniqueFilename($_FILES['picture']['name']);
+      $uniqueName = $this->getUniqueFilename($file['name']);
       $filename = dirname(__DIR__) . "/public" . $imgFolder . $uniqueName;
 
-      if(stripos($_FILES['picture']['type'], 'image') === false) {
+      if(stripos($file['type'], 'image') === false) {
         return 'Incorrect file type. Image expected';
       }
 
-      if ($_FILES['picture']['size'] > $this->img_size[0]) {
+      if ($file['size'] > $this->img_size[0]) {
         return 'File size exceeds ' . $this->img_size[1];
       }
 
-      if (!copy($_FILES['picture']['tmp_name'], $filename)) {
+      if (!copy($file['tmp_name'], $filename)) {
         return 'Error occurred while loading the image';
       }
       // delete an old image file

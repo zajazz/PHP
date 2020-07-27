@@ -1,11 +1,10 @@
 {# @var array title  #}
 {# @var App\services\Paginator paginator #}
 
-
-
 {% extends 'layouts/main.twig' %}
 
 {% block content %}
+  {% include 'patterns/paging.twig' %}
   {% for user in paginator.getItems %}
   <p><a href="/user/one?id={{ user.id }}">{{ user.fio }}</a></p>
   {% endfor %}

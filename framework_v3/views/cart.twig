@@ -1,0 +1,50 @@
+{# @var array cart #}
+{% set sum = 0 %}
+{% set currency =  '&#8381;' %}
+{% extends 'layouts/main.twig' %}
+
+
+{% block content %}
+<div class="card bg-secondary text-white px-2 py-1 my-1" id="cart">
+    <div class="row mb-1">
+        <div class="col-5">Product</div>
+        <div class="col-2">Price</div>
+        <div class="col-3">Quantity</div>
+        <div class="col-2">Subtotal</div>
+    </div>
+</div>
+{% for id, item in cart %}
+<div class="card bg-light my-2 px-2 py-1" id="cartItem{{ id }}">
+    <div class="row mb-1 align-items-center" id="cartItem{{ id }}">
+        <div class="col-5"><a href="?p=product&a=one&id=<?= $id ?>" class="text-dark">{{ item.title }}</a></div>
+        <div class="col-2"><span id="itemPrice{{ id }}">{{ item.price }}</span> {{ currency|raw }}</div>
+        <div class="col-3 pl-4">
+            <span @click="addToCart({{ id }})" class="qty-btn"><i class="fas fa-plus-circle"></i></span>
+            <span id="itemCount{{ id }}">{{ item.count }}</span>
+            <span @click="removeFromCart({{ id }})" class="qty-btn"><i class="fas fa-minus-circle"></i></span>
+        </div>
+        <div class="col-2"><span id="itemSub{{ id }}" name="subtotal">
+                {{ (item.price * item.count)|number_format(2, '.', '') }}</span>
+            {{ currency|raw }}</div>
+    </div>
+</div>
+    {% set sum = sum + (item.price * item.count) %}
+{# if cart is empty #}
+{% else %}
+    <div class="card bg-light my-2 px-2 py-3" >
+        <span>Your cart is empty. Let's start <a href="/product" >shopping</a>!</span></div>
+{% endfor %}
+<div class="card bg-secondary font-weight-bold text-white my-2 px-2 py-3" >
+    <div class="row mb-1">
+        <div class="col-7"></div>
+        <div class="col-3 text-right">Total:</div>
+        <div class="col-2 "><span id="cartTotal">{{ sum }}</span> {{ currency|raw }}</div>
+    </div>
+</div>
+<div class="row mb-1">
+    <div class="col text-right mt-3"><a class="btn btn-info btn-lg px-5" href="/order/make">Make
+            order</a></div>
+</div>
+
+<? endif; ?>
+{% endblock %}
