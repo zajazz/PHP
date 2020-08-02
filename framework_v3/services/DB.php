@@ -1,23 +1,31 @@
 <?php
 namespace App\services;
 
-use App\traits\TSingleton;
+use App\repositories\ProductRepository;
+use App\repositories\UserRepository;
+use App\engine\Container;
 use PDO;
 
+/**
+ * Class DB
+ * @package App\services
+ *
+ * @property ProductRepository $productRepository
+ * @property UserRepository $userRepository
+ */
 class DB
 {
-  use TSingleton;
-
   protected $connect;
-  protected $config = [
-    'driver' => 'mysql',
-    'host' => 'localhost',
-    'dbname' => 'gbphp',
-    'charset' => 'UTF8',
-    'port' => 3305,
-    'user' => 'root',
-    'password' => 'root',
-  ];
+  protected $config = [];
+
+  /**
+   * DB constructor.
+   * @param array $config
+   */
+  public function __construct(array $config)
+  {
+    $this->config = $config;
+  }
 
   protected function getConnect()
   {
@@ -39,6 +47,7 @@ class DB
    */
   protected function query($sql, $params = [])
   {
+//    return $PDOStatement = $this->getConnect()->prepare($sql)->debugDumpParams();
     $PDOStatement = $this->getConnect()->prepare($sql);
     $PDOStatement->execute($params);
     return $PDOStatement;
@@ -72,6 +81,7 @@ class DB
   public function execute($sql, $params = [])
   {
 
+    // return $PDOStatement =$this->query($sql, $params)->debugDumpParams();
     $PDOStatement =$this->query($sql, $params);
 
     if ($PDOStatement->errorCode() === '00000') {
@@ -89,15 +99,16 @@ class DB
 
   public function findObject($sql, $class, $params = [])
   {
+    // return $PDOStatement = $this->query($sql, $params)->debugDumpParams();
     $PDOStatement = $this->query($sql, $params);
     $PDOStatement->setFetchMode(PDO::FETCH_CLASS, $class);
     return $PDOStatement->fetch();
   }
+
   public function findObjects($sql, $class, $params = [])
   {
     $PDOStatement = $this->query($sql, $params);
     $PDOStatement->setFetchMode(PDO::FETCH_CLASS, $class);
     return $PDOStatement->fetchAll();
   }
-
 }

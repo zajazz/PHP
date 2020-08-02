@@ -65,6 +65,11 @@ new Vue({
             }
           }
         });
+    },
+    goLink(id, $event) {
+      if ($event.target.dataset.toggle !== 'dropdown') {
+        window.location.href = `/order/one?id=${id}`;
+      }
     }
   },
   created: function () {

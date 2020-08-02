@@ -3,13 +3,9 @@
 
 namespace App\services;
 
-
-use App\entities\Entity;
-use App\models\Model;
-use App\repositories\ProductRepository;
 use App\repositories\Repository;
 
-class Paginator
+class Paginator extends Service
 {
   public $countPerPage = 4;
   protected $items = [];

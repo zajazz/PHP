@@ -1,19 +1,8 @@
 <?php
 
-use App\services\Request;
-use App\services\TwigRenderer;
+use App\engine\App;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
+$config = include dirname(__DIR__) . '/engine/config.php';
 
-$request = new Request();
-$controller = $request->getControllerName();
-
-if (class_exists($request->getControllerName())) {
-  /** @var App\controllers\Controller $realController */
-  $realController = new $controller(new TwigRenderer(), $request);
-  $content = $realController->run($request->getActionName());
-
-  if (!empty($content)) {
-    echo $content;
-  }
-}
+echo App::call()->run($config);

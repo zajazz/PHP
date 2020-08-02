@@ -3,60 +3,59 @@
 
 namespace App\services;
 
-use App\entities\Product;
+use App\repositories\ProductRepository;
 
-class CartService
+class CartService extends Service
 {
-  public function addToCart(Product $product, Request $request)
+  const CART = 'cart';
+
+  public function addToCart(Request $request)
   {
+    $id = $request->getId();
+    $product = $this->container->productRepository->getOne($id);
 
-    $cart = $request->SESSION('cart');
-    $count = 1;
-
-    if (isset($cart[$product->id]['count'])) {
-      $count = $cart[$product->id]['count'] + 1;
+    if (empty($product)) {
+      return false;
     }
 
-    $cart[$product->id] = [
+    $cart = $request->SESSION(static::CART);
+    $count = 1;
+
+    if (isset($cart[$id]['count'])) {
+      $count = $cart[$id]['count'] + 1;
+    }
+
+    $cart[$id] = [
         'title' => $product->title,
         'price' => $product->price,
         'img' => $product->img,
         'count' => $count,
     ];
 
-    try {
-      $request->setSession('cart', $cart);
-      return true;
-    } catch (\Exception $e) {
-      ErrorService::logError($e, 'cart.log');
-      return false;
-    }
+    $request->setSession(static::CART, $cart);
+    return true;
   }
 
-  public function removeFromCart(Product $product, Request $request)
+  public function removeFromCart()
   {
-    $cart = $request->SESSION('cart');
+    $id = $this->container->request->getId();
+    $cart = $this->container->request->SESSION(static::CART);
 
-    if (empty($cart[$product->id])) return;
+    if (empty($cart[$id])) return false;
 
-    $cart[$product->id]['count'] --;
+    $cart[$id]['count'] --;
 
-    if (empty($cart[$product->id]['count'])) {
-      unset($cart[$product->id]);
+    if (empty($cart[$id]['count'])) {
+      unset($cart[$id]);
     }
 
-    try {
-      $request->setSession('cart', $cart);
-      return true;
-    } catch (\Exception $e) {
-      ErrorService::logError($e, 'cart.log');
-      return false;
-    }
+    $this->container->request->setSession(static::CART, $cart);
+    return true;
   }
 
   public function getCartCount()
   {
-    $cart = (new Request())->SESSION('cart');
+    $cart = $this->container->request->SESSION(static::CART);
     if (empty($cart)) return 0;
     return count($cart);
   }

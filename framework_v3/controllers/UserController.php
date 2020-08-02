@@ -19,7 +19,12 @@ class UserController extends Controller
 
   public function oneAction()
   {
-    $user = (new UserRepository())->getOne($this->getId());
+    if (!$this->hasPermission()) {
+      $this->redirect('/', 'No permission');
+      return false;
+    }
+
+    $user = $this->app->userRepository->getOne($this->getId());
     return $this->render(
       'user',
       [
@@ -31,8 +36,13 @@ class UserController extends Controller
 
   public function allAction()
   {
+    if (!$this->hasPermission()) {
+      $this->redirect('/', 'No permission');
+      return false;
+    }
+
     $paginator = new Paginator();
-    $paginator->setItems(new UserRepository(), $this->baseRoot, $this->getPage());
+    $paginator->setItems($this->app->userRepository, $this->baseRoot, $this->getPage());
     return $this->render(
       'users',
       [
