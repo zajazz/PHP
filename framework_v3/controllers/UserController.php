@@ -5,24 +5,13 @@ namespace App\controllers;
 
 use App\models\User;
 
-class UserController
+class UserController extends Controller
 {
-  private $action;
   protected $actionDefault = 'all';
 
-  public function run($action)
+  public function getDefaultAction(): string
   {
-    $this->action = $action;
-    if (empty($this->action)) {
-      $this->action = $this->actionDefault;
-    }
-
-    $method = $this->action . 'Action';
-    if (!method_exists($this, $method)) {
-      return 'Error';
-    }
-
-    return $this->$method();
+    return $this->actionDefault;
   }
 
   public function oneAction()
@@ -45,29 +34,5 @@ class UserController
     );
   }
 
-  public function render($template, $params = [])
-  {
-    $content = $this->renderTemplate($template, $params);
-    return $this->renderTemplate('layouts/main', [
-      'content' => $content,
-    ]);
-  }
 
-  public function renderTemplate($template, $params = [])
-  {
-    ob_start();
-    extract($params);
-    include dirname(__DIR__) . '/views/' . $template . '.php';
-    return ob_get_clean();
-  }
-
-  protected function getId()
-  {
-    $id = 0;
-    if (!empty((int)$_GET['id'])) {
-      $id = (int)$_GET['id'];
-    }
-
-    return $id;
-  }
 }
