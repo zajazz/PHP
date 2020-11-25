@@ -4,11 +4,11 @@
 namespace App\controllers;
 
 
-use App\repositories\ProductRepository;
 use App\services\CartService;
 
 class CartController extends Controller
 {
+  const CART = 'cart';
   protected $actionDefault = 'show';
   protected $baseRoot = '/cart';
 
@@ -22,7 +22,7 @@ class CartController extends Controller
     return $this->render(
       'cart',
       [
-        'cart' => $this->request->SESSION('cart'),
+        'cart' => $this->request->SESSION(static::CART),
         'title' => 'Cart',
       ]
     );
@@ -30,43 +30,31 @@ class CartController extends Controller
 
   public function addAction()
   {
-    header('Content-Type: application/json');
+    $data = ['success' => false];
 
-    $product = (new ProductRepository())->getOne($this->getId());
-    $json = json_encode(['success' => false]);
-
-    if (!empty($product)) {
-      if ((new CartService())->addToCart($product, $this->request)) {
-        $cartCount = (new CartService())->getCartCount();
-        $json = json_encode(['success' => true, 'cartCount' => $cartCount]);
-      };
+    if ($this->app->cartService->addToCart($this->request)) {
+      $cartCount = $this->app->cartService->getCartCount();
+      $data = ['success' => true, 'cartCount' => $cartCount];
     }
 
-    echo $json;
+    $this->request->sendJson($data);
   }
 
   public function delAction()
   {
-    header('Content-Type: application/json');
+    $data = ['success' => false];
 
-    $product = (new ProductRepository())->getOne($this->getId());
-    $json = json_encode(['success' => false]);
-
-    if (!empty($product)) {
-      if ((new CartService())->removeFromCart($product, $this->request)) {
-        $cartCount = (new CartService())->getCartCount();
-        $json = json_encode(['success' => true, 'cartCount' => $cartCount]);
-      }
+    if ($this->app->cartService->removeFromCart()) {
+      $cartCount = $this->app->cartService->getCartCount();
+      $data = ['success' => true, 'cartCount' => $cartCount];
     }
 
-    echo $json;
+    $this->request->sendJson($data);
   }
 
   public function countAction()
   {
-    header('Content-Type: application/json');
-
-    echo json_encode(['cartCount' => (new CartService())->getCartCount()]);
-
+    $data = ['cartCount' => $this->app->cartService->getCartCount()];
+    $this->request->sendJson($data);
   }
 }

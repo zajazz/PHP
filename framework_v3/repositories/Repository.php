@@ -3,49 +3,61 @@
 
 namespace App\repositories;
 
+use App\engine\Container;
 use App\entities\Entity;
 use App\services\DB;
 
 abstract class Repository
 {
+  protected $db;
+  /**
+   * @var Container
+   */
+  protected $container;
+
   /**
  * Return table name
  */
   abstract public function getTableName(): string;
   abstract public function getEntityName(): string;
 
-   /**
+  public function setContainer(Container $container)
+  {
+    $this->container = $container;
+  }
+
+  /**
    * @return DB
    */
-  public static function getDB()
+  public function getDB()
   {
-    return DB::getInstance();
+    return $this->container->db;
   }
 
   public function getOne($id)
   {
     $sql = "SELECT * FROM " . $this->getTableName() . " WHERE id = :id";
-    return static::getDB()->findObject($sql, $this->getEntityName(), [':id' => $id]);
-
+    return $this->getDB()->findObject($sql, $this->getEntityName(), [':id' => $id]);
   }
+
   public function getAll()
   {
     $sql = "SELECT * FROM " . $this->getTableName();
-    return static::getDB()->findObjects($sql, $this->getEntityName());
+    return $this->getDB()->findObjects($sql, $this->getEntityName());
   }
 
   public function delete(Entity $entity)
   {
     $sql = "DELETE FROM " . $this->getTableName() . " WHERE id = :id";
-    return static::getDB()->execute($sql, [':id' => $entity->id]);
+    return $this->getDB()->execute($sql, [':id' => $entity->id]);
   }
 
   public function save(Entity $entity)
   {
     if (empty($entity->id)) {
-      $this->insert($entity);
+      return $this->insert($entity);
     }
-    $this->update($entity);
+    return $this->update($entity);
   }
 
   protected function insert(Entity $entity)
@@ -67,9 +79,12 @@ abstract class Repository
       implode(', ', array_keys($params))
     );
 
-    if (static::getDB()->execute($sql, $params)) {
-      $entity->id = static::getDB()->getLastInsertId();
+    if ($this->getDB()->execute($sql, $params)) {
+      $entity->id = $this->getDB()->getLastInsertId();
+      return true;
     }
+
+    return false;
 
   }
   protected function update(Entity $entity)
@@ -86,19 +101,23 @@ abstract class Repository
     $updateStr = substr($updateStr, 0, -2);
 
     $sql = "UPDATE ". $this->getTableName() . " SET $updateStr WHERE id = :id";
-    static::getDB()->execute($sql, $params);
+    if ($this->getDB()->execute($sql, $params)) {
+      return true;
+    }
+
+    return false;
   }
 
   public function getModelsByPage(int $page, int $countPerPage)
   {
     $start = ($page - 1) * $countPerPage;
     $sql = "SELECT * FROM ". $this->getTableName() ." LIMIT {$start}, {$countPerPage}";
-    return static::getDB()->findObjects($sql, $this->getEntityName());
+    return $this->getDB()->findObjects($sql, $this->getEntityName());
   }
 
   public function getCountList()
   {
     $sql = "SELECT count(*) AS `count` FROM ". $this->getTableName();
-    return static::getDB()->find($sql)['count'];
+    return $this->getDB()->find($sql)['count'];
   }
 }

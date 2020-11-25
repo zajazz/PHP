@@ -20,4 +20,10 @@ class UserRepository extends Repository
   {
     return User::class;
   }
+
+  public function getOneByLogin($login)
+  {
+    $sql = "SELECT * FROM " . $this->getTableName() . " WHERE login = :login";
+    return $this->getDB()->findObject($sql, $this->getEntityName(), [':login' => $login]);
+  }
 }

@@ -1,4 +1,5 @@
 {# @var string title #}
+{# @var array user #}
 {# @var int cartCount #}
 
 <!DOCTYPE html>
@@ -9,11 +10,10 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.1/css/all.css" integrity="sha384-xxzQGERXS00kBmZW/6qxqJPyxW3UR0BPsL4c8ILaIWXva5kFi7TxkIIaMiKtqV1Q" crossorigin="anonymous">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?a=2">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100">
-
 <div id="app">
   <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
@@ -22,16 +22,19 @@
               data-target="#navbar1" aria-controls="navbar1" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar1">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item"><a class="nav-link my-n3" href="/user/">Users</a></li>
-          <li class="nav-item"><a class="nav-link my-n3" href="/product/">Products</a></li>
-          <li class="nav-item"><a class="nav-link my-n3" href="/product/add">Add Product</a></li>
-          <li class="d-flex mr-n5">
-            <a class="nav-link my-n3 " href="/cart">Cart
-              <sup id="cartBadge" class="badge badge-secondary" v-text="cartCount"></sup></a></li>
-        </ul>
-      </div>
+      <nav class="collapse navbar-collapse" id="navbar1">
+{% if user.isAdmin == 1 %}
+  {% include 'includes/adminMenu.twig' %}
+{% else %}
+  {% include 'includes/userMenu.twig' %}
+{% endif %}
+
+{% if user.login is not empty %}
+  {% include 'includes/navAccount.twig' %}
+{% else %}
+  {% include 'includes/navAuth.twig' %}
+{% endif %}
+      </nav>
     </div>
   </nav>
   <div class="container">

@@ -1,0 +1,15 @@
+{# @var string login #}
+<div class="nav-item dropdown position-relative">
+  <a class="nav-link " href="#" id="navAccount" role="button" data-toggle="dropdown"
+     aria-haspopup="true" aria-expanded="false">
+    <span class="d-inline-block align-middle text-info" style="font-size: 40px;">
+            <i class="fas fa-user-circle"></i>
+    </span>
+  </a>
+  <div class="dropdown-menu position-absolute" style="left: -5em;" aria-labelledby="navAccount">
+    <div class="dropdown-header"><h5>{{ user.login }}</h5></div>
+    <a class="dropdown-item" href="/auth">Account</a>
+    <a class="dropdown-item" href="/order">My orders</a>
+    <a class="dropdown-item" href="/auth/logout">Log out</a>
+  </div>
+</div>

@@ -1,9 +1,14 @@
-* {
-  /*color: blue;*/
-}
 a {
   color: #17a2b8;
 }
+a.page-link {
+  color: #17a2b8;
+}
+li.page-item.active .page-link {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
 .bb {
   border: 1px solid red;
 }
@@ -18,8 +23,6 @@ a {
   cursor: pointer;
 }
 .table-row:hover {
-  /*color: #0c5460;*/
-  /*background-color: #bee5eb!important;*/
   color: #856404;
   background-color: #ffeeba!important;
 }
@@ -38,4 +41,7 @@ a {
   color: #6c757d;
   font-size: .8rem;
   cursor: pointer;
+}
+ul.n-style {
+  list-style-type: none;
 }

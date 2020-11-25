@@ -4,7 +4,7 @@
 {% extends 'layouts/main.twig' %}
 
 {% block content %}
-  {% include 'patterns/paging.twig' %}
+  {% include 'includes/paging.twig' %}
 <div class="row">
   {% for product in paginator.getItems %}
     <div class="col-6 col-md-4 col-lg-3 d-flex align-items-stretch">

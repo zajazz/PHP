@@ -4,16 +4,12 @@
 namespace App\controllers;
 
 use App\entities\Product;
-use App\repositories\ProductRepository;
-use App\services\Paginator;
-use App\services\ProductService;
 
 class ProductController extends Controller
 {
   protected $actionDefault = 'all';
   protected $imgFolder = '/img/';
   private $baseRoot = '/product';
-  protected $request;
 
   public function getDefaultAction(): string
   {
@@ -22,7 +18,7 @@ class ProductController extends Controller
 
   public function oneAction()
   {
-    $product = (new ProductRepository())->getOne($this->getId());
+    $product = $this->app->productRepository->getOne($this->getId());
     return $this->render(
       'product',
       [
@@ -35,8 +31,8 @@ class ProductController extends Controller
 
   public function allAction()
   {
-    $paginator = new Paginator();
-    $paginator->setItems(new ProductRepository(), $this->baseRoot, $this->getPage());
+    $paginator = $this->app->paginator;
+    $paginator->setItems($this->app->productRepository, $this->baseRoot, $this->getPage());
 
     return $this->render(
       'products',
@@ -46,20 +42,21 @@ class ProductController extends Controller
         'title' => 'Catalog',
       ]
     );
-
   }
 
   public function changeAction()
   {
-    $product = (new ProductRepository())->getOne($this->getId());
+    $product = $this->app->productRepository->getOne($this->getId());
 
     // form data handling
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-          $error = (new ProductService())->saveProduct(
+          $error = $this->app->productService->save(
             $product,
             $this->imgFolder,
-            $this->request
+            $this->request->POST(),
+            $this->request->FILES('picture')
           );
+
           if (!empty($error)) {
             return $this->render('productChange', [
               'title' => 'Product change',
@@ -68,28 +65,35 @@ class ProductController extends Controller
               'error' => $error,
             ]);
           }
+
           $this->redirect('/product/one?id=' . $product->id);
-          return;
+          return true;
     }
 
     // show filled product change form
     return $this->render('productChange', [
       'title' => 'Product change',
-      'product' => (new ProductRepository())->getOne($this->getId()),
+      'product' => $this->app->productRepository->getOne($this->getId()),
       'img' => $this->imgFolder,
     ]);
   }
 
   public function addAction()
   {
+    if (!$this->hasPermission()) {
+      $this->redirect('/');
+      return false;
+    }
     // form data handling
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $product = new Product();
-          $error = (new ProductService())->saveProduct(
+          $error = $this->app->productService->save(
             $product,
             $this->imgFolder,
-            $this->request
+            $this->request->POST(),
+            $this->request->FILES('picture')
           );
+
           if (!empty($error)) {
             return $this->render('productAdd', [
               'title' => 'Add new product',
@@ -97,8 +101,9 @@ class ProductController extends Controller
               'error' => $error,
             ]);
           }
+
           $this->redirect('/product/one?id=' . $product->id);
-          return;
+          return true;
     }
 
     // show product add form
@@ -109,18 +114,13 @@ class ProductController extends Controller
   
   public function removeAction()
   {
-    $product = (new ProductRepository())->getOne($this->getId());
+    $product = $this->app->productRepository->getOne($this->getId());
 
-    if (empty($product)) {
-      $this->redirect();
-      return;
-    }
-
-    $error = $this->removeProduct($product);
+    $error = $this->app->productService->delete($product, $this->imgFolder);
 
     if (empty($error)) {
-      $this->redirect('/product/');
-      return;
+      $this->redirect($this->baseRoot, $error);
+      return false;
     }
 
     return $this->render(
@@ -132,23 +132,4 @@ class ProductController extends Controller
       ]
     );
   }
-  
-
-  private function removeProduct(Product $product)
-  {
-    // search the product through active orders
-    if ((new ProductService())->isInOrders($product)) {
-      return 'Unable to delete a product which included in user\'s orders';
-    }
-
-    if ((new ProductRepository())->delete($product) === false) {
-      return 'Error occurred while writing to the database';
-    }
-
-    $filename = dirname(__DIR__) . "/public" . $this->imgFolder . $product->img;
-    unlink($filename);
-
-    return '';
-  }
-
 }

@@ -1,0 +1,11 @@
+{# @var array user #}
+
+{% extends 'layouts/main.twig' %}
+
+{% block content %}
+<h3>{{ user.fio }}</h3>
+  <p><a href="/order">My orders</a></p>
+  <p><a class="btn btn-info" href="/auth/logout">Log out</a></p>
+
+
+{% endblock %}

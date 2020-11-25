@@ -9,22 +9,24 @@ use App\entities\Entity;
 use App\entities\Product;
 use App\repositories\ProductRepository;
 
-class ProductService
+class ProductService extends Service
 {
   protected $img_size = [1048576, '1Mb'];
 
-  public function saveProduct(Product $product, $imgFolder, Request $request)
+  public function save(Product $product, $imgFolder, $data, $file)
   {
+    if (!$this->isValidData($data)) {
+      return 'Not enough data';
+    }
 
-    $price = preg_replace('/[^0-9.,]/', '', $request->POST('price'));
+    $price = preg_replace('/[^0-9.,]/', '', $data['price']);
     $price = preg_replace('/,/', '.', $price);
 
     $product->price = $price;
-    $product->title = $request->POST('title');
-    $product->info = $request->POST('info');
+    $product->title = $data['title'];
+    $product->info = $data['info'];
 
     // Loading image
-    $file = $request->FILES('picture');
     if (!empty($file['name'])) {
 
       $uniqueName = $this->getUniqueFilename($file['name']);
@@ -50,7 +52,7 @@ class ProductService
       $product->img = $uniqueName;
     }
 
-    if ((new ProductRepository())->save($product) === false) {
+    if ($this->container->productRepository->save($product) === false) {
       return 'Error occurred while writing to the database';
     }
 
@@ -61,15 +63,39 @@ class ProductService
     return '';
   }
 
+  public function delete(Product $product, $imgFolder)
+  {
+    if (empty($product)) {
+      return 'Product not found';
+    }
+
+    // search the product through active orders
+    if ($this->container->productRepository->isInOrders($product)) {
+      return 'Unable to delete a product which included in user\'s orders';
+    }
+
+    if ($this->container->productRepository->delete($product) === false) {
+      return 'Error occurred while writing to the database';
+    }
+
+    $filename = dirname(__DIR__) . "/public" . $imgFolder . $product->img;
+    unlink($filename);
+
+    return '';
+  }
+
   public function getUniqueFilename($file)
   {
     $extension = strtolower(substr(strrchr($file, '.'), 1));
     return uniqid('img_') . "." . $extension;
   }
 
-  public function isInOrders(Entity $entity)
+  protected function isValidData($data)
   {
-    $sql = 'SELECT order_id FROM order_product WHERE product_id = :id';
-    return (bool)(new ProductRepository())->getDB()->findAll($sql, [':id' => $entity->id]);
+    if (empty($data['title']) || empty($data['info']) || empty($data['price'])) {
+      return false;
+    }
+
+    return true;
   }
 }

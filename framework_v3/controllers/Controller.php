@@ -3,6 +3,7 @@
 
 namespace App\controllers;
 
+use App\engine\App;
 use App\services\IRenderer;
 use App\services\RenderTemplate;
 use App\services\Request;
@@ -10,16 +11,22 @@ use App\services\Request;
 abstract class Controller
 {
   protected $renderer;
+  /** @var Request  */
   protected $request;
+  /**
+   * @var App
+   */
+  protected $app;
+  protected $isDenied = false;
 
   /**
    * Controller constructor.
-   * @param IRenderer $renderer
+   * @param App $app
    * @param Request $request
    */
-  public function __construct(IRenderer $renderer, Request $request)
+  public function __construct(App $app, Request $request)
   {
-    $this->renderer = $renderer;
+    $this->app = $app;
     $this->request = $request;
   }
 
@@ -40,7 +47,7 @@ abstract class Controller
   }
   public function render($template, $params)
   {
-    return $this->renderer->render($template, $params);
+    return $this->app->renderer->render($template, $params);
   }
 
   protected function getId()
@@ -52,19 +59,22 @@ abstract class Controller
     return $this->request->getPage();
   }
 
-  public function redirect($path = ''): void
+  public function redirect($path = '', $msg = ''): void
   {
-
-    if (!empty($path)) {
-      header("Location: {$path}");
-      return;
+    $this->request->redirect($path, $msg);
+  }
+  
+  public function hasPermission()
+  {
+    if (!$this->app->authService->isAdmin()) {
+      return false;
     }
+    return true;
+  }
 
-    if (isset($_SERVER['HTTP_REFERER'])) {
-      header("Location: {$_SERVER['HTTP_REFERER']}");
-      return;
-    }
-    header("Location: /");
+  public function isAuthorized()
+  {
+    return $this->app->authService->isAuthorized();
   }
 
 }

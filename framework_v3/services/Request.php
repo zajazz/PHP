@@ -8,7 +8,7 @@ use Exception;
 
 class Request
 {
-  private $requestString = '';
+  private $requestString;
   private $controllerName = 'product';
   private $actionName = '';
   private $id;
@@ -53,26 +53,20 @@ class Request
     }
   }
 
-  /**
-   * @return string
-   */
   public function getControllerName(): string
   {
     return 'App\\controllers\\' . ucfirst($this->controllerName) . 'Controller';
   }
 
-  /**
-   * @return string
-   */
   public function getActionName(): string
   {
     return $this->actionName;
   }
 
   /**
-   * @return mixed
+   * @return int
    */
-  public function getId()
+  public function getId(): int
   {
     return $this->id;
   }
@@ -85,39 +79,19 @@ class Request
     return $this->page;
   }
 
-  public function GET($key = null)
+  public function GET($key = null, $defaultValue = null)
   {
-    if (empty($key)) return $this->params['get'];
-
-    if (array_key_exists($key, $this->params['get'])) {
-        return $this->params['get'][$key];
-      }
-
-    return null;
+    return $this->getDataByKey('get', $key, $defaultValue);
   }
 
-  public function POST($key = null)
+  public function POST($key = '', $defaultValue = null)
   {
-    if (empty($key)) return $this->params['post'];
-
-    if (array_key_exists($key, $this->params['post'])) {
-      return $this->params['post'][$key];
-    }
-
-    return null;
+    return $this->getDataByKey('post', $key, $defaultValue);
   }
 
-  public function SESSION($key = null)
+  public function SESSION($key = null, $defaultValue = null)
   {
-    if (empty($this->params['session'])) return null;
-
-    if (empty($key)) return $this->params['session'];
-
-    if (array_key_exists($key, $this->params['session'])) {
-      return $this->params['session'][$key];
-    }
-
-    return null;
+    return $this->getDataByKey('session', $key, $defaultValue);
   }
 
   public function FILES($key = null)
@@ -133,15 +107,51 @@ class Request
 
   public function setSession($key, $value)
   {
-    if (empty($key)) throw new Exception('Cannot set session with empty key.');
-    $_SESSION[$key] = $value;
-
-    $this->params['session'] = $_SESSION;
+    if (!empty($key)) {
+      $_SESSION[$key] = $value;
+      $this->params['session'] = $_SESSION;
+    }
   }
   
-  public function startSession(array $options = []): void
+  private function startSession(array $options = []): void
   {
     session_start($options);
   }
 
+  protected function getDataByKey($method, $key = '', $defaultValue = null)
+  {
+    if (empty($key)) return $this->params[$method];
+
+    if (array_key_exists($key, $this->params[$method])) {
+      return $this->params[$method][$key];
+    }
+
+    return  $defaultValue;
+  }
+
+  public function redirect($path = '', $msg = '')
+  {
+    // TODO message display component
+    if (isset($msg)) {
+        $this->setSession('msg', $msg);
+    }
+
+    if (!empty($path)) {
+      header("Location: {$path}");
+      return;
+    }
+
+    if (isset($_SERVER['HTTP_REFERER'])) {
+      header("Location: {$_SERVER['HTTP_REFERER']}");
+      return;
+    }
+
+    header("Location: /");
+  }
+
+  public function sendJson($data)
+  {
+    header('Content-Type: application/json');
+    echo json_encode($data);
+  }
 }

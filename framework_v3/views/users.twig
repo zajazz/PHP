@@ -4,7 +4,7 @@
 {% extends 'layouts/main.twig' %}
 
 {% block content %}
-  {% include 'patterns/paging.twig' %}
+  {% include 'includes/paging.twig' %}
   {% for user in paginator.getItems %}
   <p><a href="/user/one?id={{ user.id }}">{{ user.fio }}</a></p>
   {% endfor %}
