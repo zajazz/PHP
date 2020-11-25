@@ -34,3 +34,8 @@ a {
   height: 100%;
   width: 100%;
 }
+.qty-btn {
+  color: #6c757d;
+  font-size: .8rem;
+  cursor: pointer;
+}

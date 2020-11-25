@@ -67,6 +67,4 @@ abstract class Controller
     header("Location: /");
   }
 
-
-
 }

@@ -6,11 +6,7 @@ use App\services\TwigRenderer;
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 $request = new Request();
-
 $controller = $request->getControllerName();
-
-
-
 
 if (class_exists($request->getControllerName())) {
   /** @var App\controllers\Controller $realController */
