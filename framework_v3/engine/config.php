@@ -10,7 +10,7 @@ return [
         'host' => 'localhost',
         'dbname' => 'gbphp',
         'charset' => 'UTF8',
-        'port' => 3305,
+        'port' => 3306,
         'user' => 'root',
         'password' => 'root',
       ],
